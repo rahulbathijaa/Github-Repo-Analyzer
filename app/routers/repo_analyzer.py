@@ -1,69 +1,38 @@
-# app/routers/repo_analyzer.py
 from fastapi import APIRouter, HTTPException
 from app.utils import github_client
+from app.utils.analyzer_utils import extract_user_profile
+from app.models.models import UserProfile
+import httpx
 
 router = APIRouter()
 
-@router.get("/analyze/{username}")
-async def analyze_user(username: str):
+@router.get("/user/{username}", response_model=UserProfile)
+async def get_user_profile(username: str):
+    try:
+        data = await fetch_user_data(username)
+        user_profile = extract_user_profile(data)
+        return user_profile
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+async def fetch_user_data(username: str):
     query = """
     query ($username: String!) {
       user(login: $username) {
         login
+        name
         avatarUrl
-        createdAt
         bio
+        createdAt
         followers {
           totalCount
         }
         following {
           totalCount
         }
-        repositories(first: 1, orderBy: {field: UPDATED_AT, direction: DESC}) {
-          nodes {
-            name
-            primaryLanguage {
-              name
-            }
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 100) {
-                    edges {
-                      node {
-                        committedDate
-                        message
-                        additions
-                        deletions
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            pullRequests(first: 100, states: MERGED) {
-              edges {
-                node {
-                  createdAt
-                  title
-                  additions
-                  deletions
-                }
-              }
-            }
-            object(expression: "HEAD:README.md") {
-              ... on Blob {
-                text
-              }
-            }
-          }
-        }
       }
     }
     """
     variables = {"username": username}
-    try:
-        data = await github_client.graphql_query(query, variables)
-        return data
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
+    data = await github_client.graphql_query(query, variables)
+    return data
