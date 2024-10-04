@@ -4,6 +4,9 @@ from app.utils.analyzer_utils import extract_user_profile
 from app.utils.repository_analysis import chain_of_thought_analysis
 from app.models.models import UserProfile, RepoAnalysis
 import httpx
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -12,17 +15,6 @@ async def fetch_user_profile_and_repos(username: str):
     query = """
     query ($username: String!) {
       user(login: $username) {
-        login
-        name
-        avatarUrl
-        bio
-        createdAt
-        followers {
-          totalCount
-        }
-        following {
-          totalCount
-        }
         repositories(first: 100, orderBy: {field: STARGAZERS, direction: DESC}) {
           nodes {
             name
@@ -37,26 +29,38 @@ async def fetch_user_profile_and_repos(username: str):
             watchers {
               totalCount
             }
+            description
+            primaryLanguage {
+              name
+            }
+            owner {
+              login
+            }
+            isFork
+            updatedAt
           }
         }
       }
     }
     """
+    
     variables = {"username": username}
     data = await github_client.graphql_query(query, variables)
 
-    # Check if 'data' and 'user' keys exist in response
-    if "data" not in data or "user" not in data["data"]:
-        raise HTTPException(status_code=404, detail="User not found in GitHub response")
+    # Filter out forked repositories and repositories not owned by the user
+    user_repos = [repo for repo in data["data"]["user"]["repositories"]["nodes"] 
+                  if repo['owner']['login'] == username and not repo['isFork']]
 
-    return data
+    return user_repos
+
 
 # User profile route
 @router.get("/user/{username}", response_model=UserProfile)
 async def get_user_profile(username: str):
     try:
         data = await fetch_user_profile_and_repos(username)
-        user_profile = extract_user_profile(data["data"])  # Access 'data' key explicitly
+        # Ensure 'data' is accessed correctly
+        user_profile = extract_user_profile(data)  # Removed ["data"] as 'data' is already the user data
         return user_profile
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
@@ -68,28 +72,30 @@ async def analyze_repositories(username: str):
         # Fetch user profile and repositories
         data = await fetch_user_profile_and_repos(username)
 
-        repos = data["data"]["user"]["repositories"]["nodes"]
-        if not repos:
-            raise HTTPException(status_code=404, detail="No repositories found for this user.")
-        
-        # Find the most popular repo by stars
-        most_popular_repo = max(repos, key=lambda r: r.get("stargazerCount", 0))
+        # Filter repositories to ensure they are owned by the user and not forks
+        user_repos = [repo for repo in data if repo['owner']['login'] == username and not repo['isFork']]
 
-        # Analyze repo metrics
-        repo_metrics = {
-            "repo_name": most_popular_repo['name'],
-            "stars": most_popular_repo.get("stargazerCount", 0),
-            "forks": most_popular_repo.get("forkCount", 0),
-            "open_issues": most_popular_repo['openIssues']['totalCount'],
-            "watchers": most_popular_repo['watchers']['totalCount'],
-            "issues_closed": most_popular_repo['closedIssues']['totalCount']
-        }
+        if not user_repos:
+            raise HTTPException(status_code=404, detail="No owned repositories found for this user.")
+        
+        # Find the most popular repo by stars from the filtered user-owned repos
+        most_popular_repo = max(user_repos, key=lambda r: r.get("stargazerCount", 0))
+
+        # Alternatively, sort by updatedAt to get the first listed repo
+        first_repo = sorted(user_repos, key=lambda r: r['updatedAt'], reverse=True)[0]
+
+        # Depending on the logic, you can return either the most popular or first listed repo
+        repo_to_analyze = most_popular_repo  # or first_repo, based on preference
 
         # Call the chain-of-thought analysis function
-        analysis = chain_of_thought_analysis(repo_metrics)
+        analysis_result = chain_of_thought_analysis(repo_to_analyze)
 
-        # Return the repo metrics and the analysis
-        return RepoAnalysis(**repo_metrics, analysis=analysis)
+        # Log the analysis result for debugging
+        logger.info(f"Analysis result: {analysis_result}")
+
+        # Return the analysis result
+        return RepoAnalysis(**analysis_result)
 
     except Exception as exc:
+        logger.error(f"An error occurred: {str(exc)}")
         raise HTTPException(status_code=500, detail=str(exc))

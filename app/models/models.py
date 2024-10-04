@@ -17,5 +17,8 @@ class RepoAnalysis(BaseModel):
     forks: int
     open_issues: int
     watchers: int
-    issues_closed: int
+    forks_to_stars_ratio: float
+    issues_resolution_rate: float
+    engagement_score: float
     analysis: str
+    overall_score: int
