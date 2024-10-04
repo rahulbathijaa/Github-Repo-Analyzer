@@ -10,3 +10,11 @@ class UserProfile(BaseModel):
     createdAt: str
     followers: int
     following: int
+
+class RepoAnalysis(BaseModel):
+    repo_name: str
+    stars: int
+    forks: int
+    open_issues: int
+    watchers: int
+    issues_closed: int
