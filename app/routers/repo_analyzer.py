@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.utils import github_client
 from app.utils.analyzer_utils import extract_user_profile
+from app.utils.repository_analysis import chain_of_thought_analysis
 from app.models.models import UserProfile, RepoAnalysis
 import httpx
 
@@ -84,7 +85,11 @@ async def analyze_repositories(username: str):
             "issues_closed": most_popular_repo['closedIssues']['totalCount']
         }
 
-        return repo_metrics
+        # Call the chain-of-thought analysis function
+        analysis = chain_of_thought_analysis(repo_metrics)
+
+        # Return the repo metrics and the analysis
+        return RepoAnalysis(**repo_metrics, analysis=analysis)
 
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

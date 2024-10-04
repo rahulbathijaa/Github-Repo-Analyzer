@@ -18,3 +18,4 @@ class RepoAnalysis(BaseModel):
     open_issues: int
     watchers: int
     issues_closed: int
+    analysis: str
