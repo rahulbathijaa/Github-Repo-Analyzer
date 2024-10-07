@@ -3,6 +3,7 @@ from app.utils import github_client
 from app.utils.analyzer_utils import extract_user_profile
 from app.utils.repository_analysis import chain_of_thought_analysis
 from app.models.models import UserProfile, RepoAnalysis, RepoLanguages, LanguageUsage
+from typing import List
 import httpx
 import logging
 
