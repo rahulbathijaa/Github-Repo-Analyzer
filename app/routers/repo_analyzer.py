@@ -12,37 +12,46 @@ router = APIRouter()
 
 # Consolidated fetch function that pulls both user profile and repos
 async def fetch_user_profile_and_repos(username: str):
-    query = """
-    query ($username: String!) {
-      user(login: $username) {
-        repositories(first: 100, orderBy: {field: STARGAZERS, direction: DESC}) {
-          nodes {
-            name
-            stargazerCount
-            forkCount
-            openIssues: issues(states: OPEN) {
-              totalCount
-            }
-            closedIssues: issues(states: CLOSED) {
-              totalCount
-            }
-            watchers {
-              totalCount
-            }
-            description
-            primaryLanguage {
+query = """
+query ($username: String!) {
+  user(login: $username) {
+    repositories(first: 100, orderBy: {field: STARGAZERS, direction: DESC}) {
+      nodes {
+        name
+        stargazerCount
+        forkCount
+        openIssues: issues(states: OPEN) {
+          totalCount
+        }
+        closedIssues: issues(states: CLOSED) {
+          totalCount
+        }
+        watchers {
+          totalCount
+        }
+        description
+        primaryLanguage {
+          name
+        }
+        languages(first: 10) {
+          edges {
+            size
+            node {
               name
             }
-            owner {
-              login
-            }
-            isFork
-            updatedAt
           }
         }
+        owner {
+          login
+        }
+        isFork
+        updatedAt
       }
     }
-    """
+  }
+}
+"""
+
     
     variables = {"username": username}
     data = await github_client.graphql_query(query, variables)
