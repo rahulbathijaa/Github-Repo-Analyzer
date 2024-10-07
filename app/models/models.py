@@ -1,6 +1,7 @@
 # app/models/models.py
 from pydantic import BaseModel
 from typing import Optional
+from typing import List 
 
 class UserProfile(BaseModel):
     login: str
@@ -22,3 +23,11 @@ class RepoAnalysis(BaseModel):
     engagement_score: float
     analysis: str
     overall_score: int
+
+class LanguageUsage(BaseModel):
+    language: str
+    size: int
+
+class RepoLanguages(BaseModel):
+    repo_name: str
+    languages: List[LanguageUsage]
