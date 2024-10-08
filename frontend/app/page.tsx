@@ -1,7 +1,12 @@
+// /app/page.tsx
 "use client";
 
 import { useState } from 'react';
+import UserProfileComponent from '../components/UserProfile';
+import RepoAnalysisComponent from '../components/RepoAnalysis';
+import RepoLanguagesComponent from '../components/RepoLanguages';
 import LanguageHeatmap from '../components/LanguageHeatmap';
+import { UserProfile, RepoAnalysis, RepoLanguages, HeatmapData } from '../types';
 
 export default function Home() {
   const [username, setUsername] = useState('');
@@ -34,7 +39,7 @@ export default function Home() {
     const aggregatedData: HeatmapData[] = [];
 
     repos.forEach((repo) => {
-      const year = new Date(repo.updatedAt).getFullYear();
+      const year = new Date(repo.updatedAt || '').getFullYear(); // Handle optional updatedAt
       repo.languages.forEach((lang) => {
         const existing = aggregatedData.find(
           (item) => item.language === lang.language && item.year === year
@@ -110,42 +115,11 @@ export default function Home() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {isLoading && <p>Loading data...</p>}
 
-      {userProfile && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>{userProfile.name || userProfile.login}</h2>
-          <img src={userProfile.avatarUrl} alt="Avatar" width="100" />
-          <p>{userProfile.bio}</p>
-          <p>Followers: {userProfile.followers}</p>
-          <p>Following: {userProfile.following}</p>
-        </div>
-      )}
+      {userProfile && <UserProfileComponent userProfile={userProfile} />}
 
-      {repoAnalysis && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Repository Analysis: {repoAnalysis.repo_name}</h2>
-          <p>{repoAnalysis.analysis}</p>
-          <p>Overall Score: {repoAnalysis.overall_score}</p>
-          {/* Display other metrics as needed */}
-        </div>
-      )}
+      {repoAnalysis && <RepoAnalysisComponent repoAnalysis={repoAnalysis} />}
 
-      {repoLanguages.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Repository Languages</h2>
-          {repoLanguages.map((repo) => (
-            <div key={repo.repo_name} style={{ marginBottom: '20px' }}>
-              <h3>{repo.repo_name}</h3>
-              <ul>
-                {repo.languages.map((lang) => (
-                  <li key={lang.language}>
-                    {lang.language}: {lang.size} bytes
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
+      {repoLanguages.length > 0 && <RepoLanguagesComponent repoLanguages={repoLanguages} />}
 
       {heatmapData.length > 0 && (
         <div style={{ marginTop: '20px' }}>
