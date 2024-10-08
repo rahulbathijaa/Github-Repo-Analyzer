@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useState } from 'react';
@@ -11,48 +10,30 @@ export default function Home() {
   const [repoLanguages, setRepoLanguages] = useState<RepoLanguages[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchUserProfile = async () => {
-    if (!username) return;
-
-    try {
-      const response = await fetch(`http://localhost:8000/user/${username}`);
-      if (!response.ok) {
-        throw new Error('User not found');
-      }
-      const data = await response.json();
-      setUserProfile(data);
-      setError('');
-    } catch (error: any) {
-      console.error('Error fetching user profile:', error);
-      setUserProfile(null);
-      setError(error.message);
+    const response = await fetch(`http://localhost:8000/user/${username}`);
+    if (!response.ok) {
+      throw new Error('User not found');
     }
+    const data = await response.json();
+    setUserProfile(data);
   };
 
   const fetchRepoAnalysis = async () => {
-    if (!username) return;
-
-    try {
-      const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
-      if (!response.ok) {
-        throw new Error('Error fetching repo analysis');
-      }
-      const data = await response.json();
-      setRepoAnalysis(data);
-      setError('');
-    } catch (error: any) {
-      console.error('Error fetching repo analysis:', error);
-      setRepoAnalysis(null);
-      setError(error.message);
+    const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
+    if (!response.ok) {
+      throw new Error('Error fetching repo analysis');
     }
+    const data = await response.json();
+    setRepoAnalysis(data);
   };
 
   const processLanguageData = (repos: RepoLanguages[]) => {
     const aggregatedData: HeatmapData[] = [];
 
     repos.forEach((repo) => {
-      // Assuming 'updatedAt' is available in repo data
       const year = new Date(repo.updatedAt).getFullYear();
       repo.languages.forEach((lang) => {
         const existing = aggregatedData.find(
@@ -74,48 +55,60 @@ export default function Home() {
   };
 
   const fetchRepoLanguages = async () => {
+    const response = await fetch(`http://localhost:8000/repos/languages/${username}`);
+    if (!response.ok) {
+      throw new Error('Error fetching repo languages');
+    }
+    const data = await response.json();
+    setRepoLanguages(data);
+
+    // Process data for heatmap
+    const heatmapData = processLanguageData(data);
+    setHeatmapData(heatmapData);
+  };
+
+  const fetchAllData = async () => {
     if (!username) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/repos/languages/${username}`);
-      if (!response.ok) {
-        throw new Error('Error fetching repo languages');
-      }
-      const data = await response.json();
-      setRepoLanguages(data);
-
-      // Process data for heatmap
-      const heatmapData = processLanguageData(data);
-      setHeatmapData(heatmapData);
+      setIsLoading(true);
       setError('');
+      await Promise.all([
+        fetchUserProfile(),
+        fetchRepoAnalysis(),
+        fetchRepoLanguages(),
+      ]);
     } catch (error: any) {
-      console.error('Error fetching repo languages:', error);
-      setRepoLanguages([]);
-      setError(error.message);
+      console.error('Error fetching data:', error);
+      setError('An error occurred while fetching data.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>GitHub Repo Analyzer</h1>
-      <input
-        type="text"
-        placeholder="Enter GitHub Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        style={{ padding: '10px', fontSize: '16px' }}
-      />
-      <button onClick={fetchUserProfile} style={{ marginLeft: '10px', padding: '10px' }}>
-        Fetch User Profile
-      </button>
-      <button onClick={fetchRepoAnalysis} style={{ marginLeft: '10px', padding: '10px' }}>
-        Fetch Repo Analysis
-      </button>
-      <button onClick={fetchRepoLanguages} style={{ marginLeft: '10px', padding: '10px' }}>
-        Fetch Repo Languages
-      </button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          fetchAllData();
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Enter GitHub Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ padding: '10px', fontSize: '16px' }}
+        />
+        <button type="submit" style={{ marginLeft: '10px', padding: '10px' }}>
+          Fetch Data
+        </button>
+      </form>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {isLoading && <p>Loading data...</p>}
 
       {userProfile && (
         <div style={{ marginTop: '20px' }}>
