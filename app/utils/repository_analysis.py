@@ -57,36 +57,32 @@ def generate_repo_analysis(client, metrics):
     4. Potential areas for improvement
 
     Also, provide an overall score for the repository health on a scale of 0-100.
-
-    Return the response as a JSON object with the following structure:
-    {{
-        "analysis": "string",
-        "overall_score": int
-    }}
     """
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that provides detailed code repository analysis."},
+                {"role": "system", "content": "You are an AI assistant that analyzes GitHub repository metrics and provides insights."},
                 {"role": "user", "content": prompt}
-            ],
-            max_tokens=500
+            ]
         )
         
         content = response.choices[0].message.content.strip()
         logger.info(f"API response content: {content}")
         
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError as json_err:
-            logger.error(f"JSON parsing error: {str(json_err)}")
-            logger.error(f"Attempted to parse: {content}")
-            return {
-                "analysis": f"Error parsing API response: {str(json_err)}",
-                "overall_score": 0
-            }
+        # Extract the overall score from the content
+        import re
+        score_match = re.search(r'Overall score: (\d+)', content)
+        overall_score = int(score_match.group(1)) if score_match else 0
+
+        # Remove the overall score from the analysis text
+        analysis = re.sub(r'Overall score: \d+', '', content).strip()
+
+        return {
+            "analysis": analysis,
+            "overall_score": overall_score
+        }
     
     except Exception as e:
         logger.error(f"API call error: {str(e)}")
