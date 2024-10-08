@@ -92,41 +92,54 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>GitHub Repo Analyzer</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          fetchAllData();
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Enter GitHub Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ padding: '10px', fontSize: '16px' }}
-        />
-        <button type="submit" style={{ marginLeft: '10px', padding: '10px' }}>
-          Fetch Data
-        </button>
-      </form>
+    <div style={{ 
+      padding: '20px', 
+      backgroundColor: 'black', 
+      color: 'white', 
+      minHeight: '100vh'
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(8, 1fr)',
+        gap: '20px',
+      }}>
+        <div style={{ gridColumn: '2 / 8' }}>
+          <h1>GitHub Repo Analyzer</h1>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              fetchAllData();
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Enter GitHub Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={{ padding: '10px', fontSize: '16px', backgroundColor: '#333', color: 'white', border: 'none' }}
+            />
+            <button type="submit" style={{ marginLeft: '10px', padding: '10px', backgroundColor: '#555', color: 'white', border: 'none' }}>
+              Fetch Data
+            </button>
+          </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {isLoading && <p>Loading data...</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {isLoading && <p>Loading data...</p>}
 
-      {userProfile && <UserProfileComponent userProfile={userProfile} />}
+          {userProfile && <UserProfileComponent userProfile={userProfile} />}
 
-      {repoAnalysis && <RepoAnalysisComponent repoAnalysis={repoAnalysis} />}
+          {repoAnalysis && <RepoAnalysisComponent repoAnalysis={repoAnalysis} />}
 
-      {repoLanguages.length > 0 && <RepoLanguagesComponent repoLanguages={repoLanguages} />}
+          {repoLanguages.length > 0 && <RepoLanguagesComponent repoLanguages={repoLanguages} />}
 
-      {heatmapData.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Language Usage Heatmap</h2>
-          <LanguageHeatmap data={heatmapData} />
+          {heatmapData.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h2>Language Usage Heatmap</h2>
+              <LanguageHeatmap data={heatmapData} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

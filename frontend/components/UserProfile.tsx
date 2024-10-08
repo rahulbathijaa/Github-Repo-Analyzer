@@ -9,12 +9,24 @@ interface UserProfileProps {
 
 const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   return (
-    <div style={{ marginTop: '20px' }}>
-      <h2>{userProfile.name || userProfile.login}</h2>
-      <img src={userProfile.avatarUrl} alt="Avatar" width="100" />
-      <p>{userProfile.bio}</p>
-      <p>Followers: {userProfile.followers}</p>
-      <p>Following: {userProfile.following}</p>
+    <div style={{ 
+      marginTop: '20px',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(6, 1fr)',
+      gap: '20px',
+      alignItems: 'center'
+    }}>
+      <div style={{ gridColumn: '1 / 6' }}>
+        <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>{userProfile.name || userProfile.login}</h2>
+        <p style={{ fontSize: '14px', marginBottom: '5px' }}>{userProfile.bio}</p>
+        <p style={{ fontSize: '14px' }}>
+          <span style={{ marginRight: '15px' }}>Followers: {userProfile.followers}</span>
+          <span>Following: {userProfile.following}</span>
+        </p>
+      </div>
+      <div style={{ gridColumn: '6 / 7', justifySelf: 'end' }}>
+        <img src={userProfile.avatarUrl} alt="Avatar" width="100" style={{ borderRadius: '50%' }} />
+      </div>
     </div>
   );
 };
