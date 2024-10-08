@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import UserProfileComponent from '../components/UserProfile';
 import RepoAnalysisComponent from '../components/RepoAnalysis';
-import RepoLanguagesComponent from '../components/RepoLanguages';
 import LanguageHeatmap from '../components/LanguageHeatmap';
 import { UserProfile, RepoAnalysis, RepoLanguages, HeatmapData } from '../types';
 
@@ -12,7 +11,6 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis | null>(null);
-  const [repoLanguages, setRepoLanguages] = useState<RepoLanguages[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +37,9 @@ export default function Home() {
     const aggregatedData: HeatmapData[] = [];
 
     repos.forEach((repo) => {
-      const year = new Date(repo.updatedAt || '').getFullYear(); // Handle optional updatedAt
+      const updatedAt = repo.updatedAt || '';
+      const year = new Date(updatedAt).getFullYear();
+
       repo.languages.forEach((lang) => {
         const existing = aggregatedData.find(
           (item) => item.language === lang.language && item.year === year
@@ -65,7 +65,6 @@ export default function Home() {
       throw new Error('Error fetching repo languages');
     }
     const data = await response.json();
-    setRepoLanguages(data);
 
     // Process data for heatmap
     const heatmapData = processLanguageData(data);
@@ -130,11 +129,9 @@ export default function Home() {
 
           {repoAnalysis && <RepoAnalysisComponent repoAnalysis={repoAnalysis} />}
 
-          {repoLanguages.length > 0 && <RepoLanguagesComponent repoLanguages={repoLanguages} />}
-
           {heatmapData.length > 0 && (
             <div style={{ marginTop: '20px' }}>
-              <h2>Language Usage Heatmap</h2>
+              <h2>Language Usage Over Time</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
           )}
