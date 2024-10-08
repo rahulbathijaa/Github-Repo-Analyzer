@@ -1,5 +1,4 @@
-def extract_user_profile(data):
-    user = data['data']['user']
+def extract_user_profile(user):
     profile = {
         'login': user['login'],
         'name': user.get('name'),
