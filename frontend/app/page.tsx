@@ -30,7 +30,22 @@ export default function Home() {
       throw new Error('Error fetching repo analysis');
     }
     const data = await response.json();
-    setRepoAnalysis(data);
+    
+    // Map the backend data to the frontend RepoAnalysis type
+    const repoAnalysis: RepoAnalysis = {
+      repo_name: data.repo_name,
+      analysis: data.analysis,
+      overall_score: data.overall_score,
+      primary_language: data.primary_language,
+      stargazers_count: data.stargazers_count,
+      forks_count: data.forks_count,
+      open_issues_count: data.open_issues_count,
+      watchers_count: data.watchers_count,
+      created_at: data.created_at,
+      description: data.description,
+    };
+    
+    setRepoAnalysis(repoAnalysis);
   };
 
   const processLanguageData = (repos: RepoLanguages[]) => {
