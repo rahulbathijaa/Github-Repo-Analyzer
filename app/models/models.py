@@ -1,7 +1,7 @@
 # app/models/models.py
+
 from pydantic import BaseModel
-from typing import Optional
-from typing import List 
+from typing import Optional, List
 
 class UserProfile(BaseModel):
     login: str
@@ -31,3 +31,9 @@ class LanguageUsage(BaseModel):
 class RepoLanguages(BaseModel):
     repo_name: str
     languages: List[LanguageUsage]
+    updatedAt: Optional[str]
+
+class LanguageYearUsage(BaseModel):
+    language: str
+    year: int
+    size: int

@@ -1,12 +1,20 @@
 // /frontend/components/LanguageHeatmap.tsx
 
 import React from 'react';
-import { HeatMapGrid } from 'react-grid-heatmap';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
-export interface HeatmapData {
+interface HeatmapData {
   language: string;
   year: number;
-  size: number;
+  size: number; // Represents total changes (additions + deletions)
 }
 
 interface Props {
@@ -14,36 +22,75 @@ interface Props {
 }
 
 const LanguageHeatmap: React.FC<Props> = ({ data }) => {
-  const xLabels = Array.from(new Set(data.map((item) => item.year))).sort();
-  const yLabels = Array.from(new Set(data.map((item) => item.language)));
+  const processData = (data: HeatmapData[]) => {
+    const dataByYear: { [year: string]: { [language: string]: number } } = {};
+    const allLanguages = new Set<string>();
 
-  const heatmapData = yLabels.map((lang) =>
-    xLabels.map(
-      (year) =>
-        data.find((d) => d.language === lang && d.year === year)?.size || 0
-    )
-  );
+    data.forEach((item) => {
+      const year = item.year.toString();
+      if (!dataByYear[year]) {
+        dataByYear[year] = {};
+      }
+      allLanguages.add(item.language);
+      if (!dataByYear[year][item.language]) {
+        dataByYear[year][item.language] = 0;
+      }
+      dataByYear[year][item.language] += item.size;
+    });
+
+    const chartData = Object.keys(dataByYear).map((year) => {
+      const entry: { [key: string]: any } = { year };
+      allLanguages.forEach((lang) => {
+        entry[lang] = dataByYear[year][lang] || 0;
+      });
+      return entry;
+    });
+
+    // Sort data by year
+    chartData.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+    return { chartData, languages: Array.from(allLanguages) };
+  };
+
+  const { chartData, languages } = processData(data);
+
+  // Assign colors to languages
+  const colors = [
+    '#8884d8',
+    '#82ca9d',
+    '#ffc658',
+    '#ff8042',
+    '#8dd1e1',
+    '#a4de6c',
+    '#d0ed57',
+    '#a28fd0',
+    '#f56991',
+    '#d0a57d',
+  ];
+
+  const languageColors: { [language: string]: string } = {};
+  languages.forEach((lang, index) => {
+    languageColors[lang] = colors[index % colors.length];
+  });
 
   return (
-    <div style={{ fontSize: '12px' }}>
-      <HeatMapGrid
-        data={heatmapData}
-        xLabels={xLabels.map(String)}
-        yLabels={yLabels}
-        cellRender={(x, y, value) => <div>{value}</div>}
-        cellStyle={(x, y, ratio) => ({
-          background: `rgba(0, 151, 230, ${ratio})`,
-          color: ratio > 0.5 ? 'white' : 'black',
-        })}
-        xLabelsStyle={() => ({
-          color: '#ffffff',
-          fontSize: '12px',
-        })}
-        yLabelsStyle={() => ({
-          color: '#ffffff',
-          fontSize: '12px',
-        })}
-      />
+    <div style={{ width: '100%', height: 400 }}>
+      <ResponsiveContainer>
+        <BarChart data={chartData}>
+          <XAxis dataKey="year" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {languages.map((lang) => (
+            <Bar
+              key={lang}
+              dataKey={lang}
+              stackId="a"
+              fill={languageColors[lang]}
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };

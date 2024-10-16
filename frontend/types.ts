@@ -12,15 +12,15 @@ export interface UserProfile {
   
   export interface RepoAnalysis {
     repo_name: string;
+    stars: number;
+    forks: number;
+    open_issues: number;
+    watchers: number;
+    forks_to_stars_ratio: number;
+    issues_resolution_rate: number;
+    engagement_score: number;
     analysis: string;
     overall_score: number;
-    primary_language?: string;
-    stargazers_count?: number;
-    forks_count?: number;
-    open_issues_count?: number;
-    watchers_count?: number;
-    created_at?: string;
-    description?: string;
   }
   
   export interface LanguageUsage {
@@ -39,3 +39,4 @@ export interface UserProfile {
     year: number;
     size: number;
   }
+  

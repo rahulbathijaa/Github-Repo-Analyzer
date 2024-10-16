@@ -1,11 +1,18 @@
 // /app/page.tsx
+
 "use client";
 
 import { useState } from 'react';
 import UserProfileComponent from '../components/UserProfile';
 import RepoAnalysisComponent from '../components/RepoAnalysis';
 import LanguageHeatmap from '../components/LanguageHeatmap';
-import { UserProfile, RepoAnalysis, RepoLanguages, HeatmapData } from '../types';
+import { UserProfile, RepoAnalysis } from '../types';
+
+interface HeatmapData {
+  language: string;
+  year: number;
+  size: number;
+}
 
 export default function Home() {
   const [username, setUsername] = useState('');
@@ -30,60 +37,16 @@ export default function Home() {
       throw new Error('Error fetching repo analysis');
     }
     const data = await response.json();
-    
-    // Map the backend data to the frontend RepoAnalysis type
-    const repoAnalysis: RepoAnalysis = {
-      repo_name: data.repo_name,
-      analysis: data.analysis,
-      overall_score: data.overall_score,
-      primary_language: data.primary_language,
-      stargazers_count: data.stargazers_count,
-      forks_count: data.forks_count,
-      open_issues_count: data.open_issues_count,
-      watchers_count: data.watchers_count,
-      created_at: data.created_at,
-      description: data.description,
-    };
-    
-    setRepoAnalysis(repoAnalysis);
+    setRepoAnalysis(data);
   };
 
-  const processLanguageData = (repos: RepoLanguages[]) => {
-    const aggregatedData: HeatmapData[] = [];
-
-    repos.forEach((repo) => {
-      const updatedAt = repo.updatedAt || '';
-      const year = new Date(updatedAt).getFullYear();
-
-      repo.languages.forEach((lang) => {
-        const existing = aggregatedData.find(
-          (item) => item.language === lang.language && item.year === year
-        );
-        if (existing) {
-          existing.size += lang.size;
-        } else {
-          aggregatedData.push({
-            language: lang.language,
-            year: year,
-            size: lang.size,
-          });
-        }
-      });
-    });
-
-    return aggregatedData;
-  };
-
-  const fetchRepoLanguages = async () => {
-    const response = await fetch(`http://localhost:8000/repos/languages/${username}`);
+  const fetchLanguageCommits = async () => {
+    const response = await fetch(`http://localhost:8000/repos/commits/${username}`);
     if (!response.ok) {
-      throw new Error('Error fetching repo languages');
+      throw new Error('Error fetching language commits');
     }
     const data = await response.json();
-
-    // Process data for heatmap
-    const heatmapData = processLanguageData(data);
-    setHeatmapData(heatmapData);
+    setHeatmapData(data);
   };
 
   const fetchAllData = async () => {
@@ -95,7 +58,7 @@ export default function Home() {
       await Promise.all([
         fetchUserProfile(),
         fetchRepoAnalysis(),
-        fetchRepoLanguages(),
+        fetchLanguageCommits(),
       ]);
     } catch (error: any) {
       console.error('Error fetching data:', error);
@@ -106,17 +69,21 @@ export default function Home() {
   };
 
   return (
-    <div style={{ 
-      padding: '20px', 
-      backgroundColor: 'black', 
-      color: 'white', 
-      minHeight: '100vh'
-    }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(8, 1fr)',
-        gap: '20px',
-      }}>
+    <div
+      style={{
+        padding: '20px',
+        backgroundColor: 'black',
+        color: 'white',
+        minHeight: '100vh',
+      }}
+    >
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 1fr)',
+          gap: '20px',
+        }}
+      >
         <div style={{ gridColumn: '2 / 8' }}>
           <h1>GitHub Repo Analyzer</h1>
           <form
@@ -130,9 +97,24 @@ export default function Home() {
               placeholder="Enter GitHub Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              style={{ padding: '10px', fontSize: '16px', backgroundColor: '#333', color: 'white', border: 'none' }}
+              style={{
+                padding: '10px',
+                fontSize: '16px',
+                backgroundColor: '#333',
+                color: 'white',
+                border: 'none',
+              }}
             />
-            <button type="submit" style={{ marginLeft: '10px', padding: '10px', backgroundColor: '#555', color: 'white', border: 'none' }}>
+            <button
+              type="submit"
+              style={{
+                marginLeft: '10px',
+                padding: '10px',
+                backgroundColor: '#555',
+                color: 'white',
+                border: 'none',
+              }}
+            >
               Fetch Data
             </button>
           </form>
@@ -146,7 +128,7 @@ export default function Home() {
 
           {heatmapData.length > 0 && (
             <div style={{ marginTop: '20px' }}>
-              <h2>Language Usage Over Time</h2>
+              <h2>Language Usage Over Time (Based on Commit Sizes)</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
           )}
