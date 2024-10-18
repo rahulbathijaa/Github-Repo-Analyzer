@@ -108,6 +108,8 @@ export default function Home() {
             </button>
           </form>
 
+
+
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
 

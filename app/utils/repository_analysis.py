@@ -1,11 +1,10 @@
 # app/utils/repository_analysis.py
 
-import openai
-from openai import OpenAI
 import os
-from dotenv import load_dotenv
-import logging
 import re
+import logging
+from dotenv import load_dotenv
+from openai import OpenAI
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -18,49 +17,73 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 def calculate_key_metrics(repo_data):
-    stars = repo_data.get('stargazerCount', 0)
-    forks = repo_data.get('forkCount', 0)
-    open_issues = repo_data.get('openIssues', {}).get('totalCount', 0)
-    closed_issues = repo_data.get('closedIssues', {}).get('totalCount', 0)
-    watchers = repo_data.get('watchers', {}).get('totalCount', 0)
+    try:
+        stars = repo_data.get('stargazerCount', 0) or 0
+        forks = repo_data.get('forkCount', 0) or 0
+        open_issues = repo_data.get('openIssues', {}).get('totalCount', 0) or 0
+        closed_issues = repo_data.get('closedIssues', {}).get('totalCount', 0) or 0
+        watchers = repo_data.get('watchers', {}).get('totalCount', 0) or 0
 
-    total_issues = open_issues + closed_issues
+        total_issues = open_issues + closed_issues
 
-    metrics = {
-        "repo_name": repo_data.get('name', 'Unknown'),
-        "stars": stars,
-        "forks": forks,
-        "open_issues": open_issues,
-        "watchers": watchers,
-        "forks_to_stars_ratio": forks / stars if stars > 0 else 0,
-        "issues_resolution_rate": closed_issues / total_issues if total_issues > 0 else 0,
-        "engagement_score": (stars + forks * 2 + watchers) / 100  # Simple engagement score
-    }
+        # Safely compute ratios, avoid division by zero
+        forks_to_stars_ratio = forks / stars if stars else 0
+        issues_resolution_rate = closed_issues / total_issues if total_issues else 0
 
-    return metrics
+        # Compute engagement score
+        engagement_score = (stars + forks * 2 + watchers) / 100
+
+        metrics = {
+            "repo_name": repo_data.get('name', 'Unknown'),
+            "stars": stars,
+            "forks": forks,
+            "open_issues": open_issues,
+            "watchers": watchers,
+            "forks_to_stars_ratio": forks_to_stars_ratio,
+            "issues_resolution_rate": issues_resolution_rate,
+            "engagement_score": engagement_score,
+        }
+
+        return metrics
+
+    except Exception as e:
+        logger.exception(f"Error calculating key metrics: {str(e)}")
+        # Return default metrics with zero values
+        return {
+            "repo_name": repo_data.get('name', 'Unknown'),
+            "stars": 0,
+            "forks": 0,
+            "open_issues": 0,
+            "watchers": 0,
+            "forks_to_stars_ratio": 0.0,
+            "issues_resolution_rate": 0.0,
+            "engagement_score": 0.0,
+        }
 
 def generate_repo_analysis(metrics):
-    prompt = f"""
-    Analyze the following repository metrics and provide insights:
-    Repository: {metrics['repo_name']}
-    Stars: {metrics['stars']}
-    Forks: {metrics['forks']}
-    Open Issues: {metrics['open_issues']}
-    Watchers: {metrics['watchers']}
-    Forks to Stars Ratio: {metrics['forks_to_stars_ratio']:.2f}
-    Issues Resolution Rate: {metrics['issues_resolution_rate']:.2f}
-    Engagement Score: {metrics['engagement_score']:.2f}
-
-    Provide a comprehensive analysis in a single paragraph. Include insights on:
-    1. Overall repository health and popularity
-    2. Community engagement and interest
-    3. Project maintenance and issue management
-    4. Potential areas for improvement
-
-    Also, provide an overall score for the repository health on a scale of 0-100.
-    """
-
     try:
+        # Build the prompt dynamically based on available metrics
+        prompt_lines = [
+            "Analyze the following repository metrics and provide insights:",
+            f"Repository: {metrics.get('repo_name', 'Unknown')}",
+            f"Stars: {metrics.get('stars', 0)}",
+            f"Forks: {metrics.get('forks', 0)}",
+            f"Open Issues: {metrics.get('open_issues', 0)}",
+            f"Watchers: {metrics.get('watchers', 0)}",
+            f"Forks to Stars Ratio: {metrics.get('forks_to_stars_ratio', 0.0):.2f}",
+            f"Issues Resolution Rate: {metrics.get('issues_resolution_rate', 0.0):.2f}",
+            f"Engagement Score: {metrics.get('engagement_score', 0.0):.2f}",
+            "",
+            "Provide a comprehensive analysis in a single paragraph. Include insights on:",
+            "1. Overall repository health and popularity",
+            "2. Community engagement and interest",
+            "3. Project maintenance and issue management",
+            "4. Potential areas for improvement",
+            "",
+            "Also, provide an overall score for the repository health on a scale of 0-100."
+        ]
+        prompt = "\n".join(prompt_lines)
+
         client = OpenAI(api_key=OPENAI_API_KEY)
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -92,7 +115,7 @@ def generate_repo_analysis(metrics):
         }
 
     except Exception as e:
-        logger.error(f"API call error: {str(e)}")
+        logger.exception(f"API call error: {str(e)}")
         # Return default values including all required fields
         return {
             "analysis": f"Error calling OpenAI API: {str(e)}",
@@ -100,23 +123,25 @@ def generate_repo_analysis(metrics):
         }
 
 def chain_of_thought_analysis(repo_data):
-    metrics = {}
     try:
         metrics = calculate_key_metrics(repo_data)
         analysis_result = generate_repo_analysis(metrics)
         return {**metrics, **analysis_result}
     except Exception as e:
-        logger.error(f"An error occurred during analysis: {str(e)}")
-        # Return a dictionary with default values that match the RepoAnalysis model
-        return {
+        logger.exception(f"An error occurred during analysis: {str(e)}")
+        # Return default values including all required fields
+        default_metrics = {
             "repo_name": repo_data.get('name', 'Unknown'),
-            "stars": metrics.get('stars', 0),
-            "forks": metrics.get('forks', 0),
-            "open_issues": metrics.get('open_issues', 0),
-            "watchers": metrics.get('watchers', 0),
-            "forks_to_stars_ratio": metrics.get('forks_to_stars_ratio', 0.0),
-            "issues_resolution_rate": metrics.get('issues_resolution_rate', 0.0),
-            "engagement_score": metrics.get('engagement_score', 0.0),
+            "stars": 0,
+            "forks": 0,
+            "open_issues": 0,
+            "watchers": 0,
+            "forks_to_stars_ratio": 0.0,
+            "issues_resolution_rate": 0.0,
+            "engagement_score": 0.0,
+        }
+        return {
+            **default_metrics,
             "analysis": f"An error occurred during analysis: {str(e)}",
             "overall_score": 0
         }
