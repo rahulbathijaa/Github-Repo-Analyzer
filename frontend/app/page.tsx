@@ -70,6 +70,7 @@ export default function Home() {
 
   return (
     <div
+      className="pt-16"
       style={{
         backgroundColor: 'black',
         color: 'white',
@@ -80,12 +81,13 @@ export default function Home() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(12, 1fr)',
-          gap: '20px',
+          gap: '24px',
         }}
       >
         <div style={{ gridColumn: '2 / 12' }}>
-          <h1>GitHub Repo Analyzer</h1>
+          <h1 className="text-6xl mb-6">GitHub Repo Analyzer</h1>
           <form
+            className="mt-6 grid grid-cols-12 gap-4"
             onSubmit={(e) => {
               e.preventDefault();
               fetchAllData();
@@ -96,25 +98,13 @@ export default function Home() {
               placeholder="Enter GitHub Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              style={{
-                padding: '10px',
-                fontSize: '16px',
-                backgroundColor: '#333',
-                color: 'white',
-                border: 'none',
-              }}
+              className="col-span-6 p-3 text-base bg-white text-black border-none rounded"
             />
             <button
               type="submit"
-              style={{
-                marginLeft: '10px',
-                padding: '10px',
-                backgroundColor: '#555',
-                color: 'white',
-                border: 'none',
-              }}
+              className="col-span-1 p-3 bg-[#39E42C] text-black border-none rounded"
             >
-              Fetch Data
+              Go
             </button>
           </form>
 
