@@ -123,9 +123,43 @@ export default function Home() {
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
 
-          {userProfile && <UserProfileComponent userProfile={userProfile} />}
+          {/* {userProfile && <UserProfileComponent userProfile={userProfile} />} */}
 
-          {repoAnalysis && <RepoAnalysisComponent repoAnalysis={repoAnalysis} />}
+          {userProfile && (
+            <>
+              <UserProfileComponent userProfile={userProfile} />
+              <div
+                style={{
+                  borderTop: '2px dashed #39E42C',
+                  marginTop: '48px',
+                  marginBottom: '48px',
+                  gridColumn: '1 / -1',
+                  borderTopStyle: 'dashed',
+                  borderTopWidth: '3px',
+                  borderTopColor: '#39E42C',
+                  borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+                }}
+              ></div>
+            </>
+          )}
+
+          {repoAnalysis && (
+            <>
+              <RepoAnalysisComponent repoAnalysis={repoAnalysis} />
+              <div
+                style={{
+                  borderTop: '2px dashed #39E42C',
+                  marginTop: '48px',
+                  marginBottom: '48px',
+                  gridColumn: '1 / -1',
+                  borderTopStyle: 'dashed',
+                  borderTopWidth: '3px',
+                  borderTopColor: '#39E42C',
+                  borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+                }}
+              ></div>
+            </>
+          )}
 
           {heatmapData.length > 0 && (
             <div style={{ marginTop: '20px' }}>
