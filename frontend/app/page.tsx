@@ -71,7 +71,6 @@ export default function Home() {
   return (
     <div
       style={{
-        padding: '20px',
         backgroundColor: 'black',
         color: 'white',
         minHeight: '100vh',
@@ -80,11 +79,11 @@ export default function Home() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
+          gridTemplateColumns: 'repeat(12, 1fr)',
           gap: '20px',
         }}
       >
-        <div style={{ gridColumn: '2 / 8' }}>
+        <div style={{ gridColumn: '2 / 12' }}>
           <h1>GitHub Repo Analyzer</h1>
           <form
             onSubmit={(e) => {
