@@ -107,8 +107,18 @@ export default function Home() {
               Go
             </button>
           </form>
-
-
+          
+          <div
+            style={{
+              borderTop: '2px dashed #39E42C',
+              marginTop: '48px',
+              gridColumn: '1 / -1',
+              borderTopStyle: 'dashed',
+              borderTopWidth: '3px',
+              borderTopColor: '#39E42C',
+              borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+            }}
+          ></div>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
