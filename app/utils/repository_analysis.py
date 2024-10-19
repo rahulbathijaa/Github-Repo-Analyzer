@@ -1,9 +1,7 @@
-# app/utils/repository_analysis.py
-
 import os
 import re
 import logging
-import math 
+import math
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -39,6 +37,7 @@ def calculate_key_metrics(repo_data):
             "stars": stars,
             "forks": forks,
             "open_issues": open_issues,
+            "closed_issues": closed_issues,  # Include closed_issues
             "watchers": watchers,
             "forks_to_stars_ratio": forks_to_stars_ratio,
             "issues_resolution_rate": issues_resolution_rate,
@@ -55,6 +54,7 @@ def calculate_key_metrics(repo_data):
             "stars": 0,
             "forks": 0,
             "open_issues": 0,
+            "closed_issues": 0,  # Include closed_issues
             "watchers": 0,
             "forks_to_stars_ratio": 0.0,
             "issues_resolution_rate": 0.0,
@@ -129,30 +129,28 @@ def generate_repo_analysis(metrics):
         content = response.choices[0].message.content.strip()
         logger.info(f"API response content: {content}")
 
-        # Extract the overall score from the content
-        score_match = re.search(r'Overall score: (\d+)', content)
-        overall_score = int(score_match.group(1)) if score_match else 0
-
-        # Remove the overall score from the analysis text
-        analysis = re.sub(r'Overall score: \d+', '', content).strip()
+        # Since we no longer ask OpenAI to provide the overall score, we don't need to extract it
+        analysis = content
 
         return {
-            "analysis": analysis,
-            "overall_score": overall_score
+            "analysis": analysis
+            # Do not include 'overall_score' here
         }
 
     except Exception as e:
         logger.exception(f"API call error: {str(e)}")
         # Return default values including all required fields
         return {
-            "analysis": f"Error calling OpenAI API: {str(e)}",
-            "overall_score": 0
+            "analysis": f"Error calling OpenAI API: {str(e)}"
+            # Do not include 'overall_score' here
         }
 
 def chain_of_thought_analysis(repo_data):
     try:
         metrics = calculate_key_metrics(repo_data)
+        overall_score = compute_overall_score(metrics)  # Compute the overall score
         analysis_result = generate_repo_analysis(metrics)
+        analysis_result['overall_score'] = overall_score  # Add the overall score to the analysis result
         return {**metrics, **analysis_result}
     except Exception as e:
         logger.exception(f"An error occurred during analysis: {str(e)}")
@@ -162,6 +160,7 @@ def chain_of_thought_analysis(repo_data):
             "stars": 0,
             "forks": 0,
             "open_issues": 0,
+            "closed_issues": 0,
             "watchers": 0,
             "forks_to_stars_ratio": 0.0,
             "issues_resolution_rate": 0.0,
