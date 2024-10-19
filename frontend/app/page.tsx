@@ -15,6 +15,7 @@ interface HeatmapData {
 }
 
 export default function Home() {
+  const [githubUrl, setGithubUrl] = useState('');
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis | null>(null);
@@ -22,7 +23,20 @@ export default function Home() {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchUserProfile = async () => {
+  const parseUsernameFromUrl = (url: string): string => {
+    try {
+      const parsedUrl = new URL(url);
+      const pathSegments = parsedUrl.pathname.split('/').filter(Boolean);
+      if (parsedUrl.hostname !== 'github.com' || pathSegments.length === 0) {
+        throw new Error('Invalid GitHub profile URL');
+      }
+      return pathSegments[0]; // The username is the first segment after 'github.com/'
+    } catch (error) {
+      throw new Error('Invalid URL');
+    }
+  };
+
+  const fetchUserProfile = async (username: string) => {
     const response = await fetch(`http://localhost:8000/user/${username}`);
     if (!response.ok) {
       throw new Error('User not found');
@@ -31,7 +45,7 @@ export default function Home() {
     setUserProfile(data);
   };
 
-  const fetchRepoAnalysis = async () => {
+  const fetchRepoAnalysis = async (username: string) => {
     const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
     if (!response.ok) {
       throw new Error('Error fetching repo analysis');
@@ -40,7 +54,7 @@ export default function Home() {
     setRepoAnalysis(data);
   };
 
-  const fetchLanguageCommits = async () => {
+  const fetchLanguageCommits = async (username: string) => {
     const response = await fetch(`http://localhost:8000/repos/commits/${username}`);
     if (!response.ok) {
       throw new Error('Error fetching language commits');
@@ -50,15 +64,18 @@ export default function Home() {
   };
 
   const fetchAllData = async () => {
-    if (!username) return;
+    if (!githubUrl) return;
 
     try {
       setIsLoading(true);
       setError('');
+      const parsedUsername = parseUsernameFromUrl(githubUrl);
+      setUsername(parsedUsername);
+
       await Promise.all([
-        fetchUserProfile(),
-        fetchRepoAnalysis(),
-        fetchLanguageCommits(),
+        fetchUserProfile(parsedUsername),
+        fetchRepoAnalysis(parsedUsername),
+        fetchLanguageCommits(parsedUsername),
       ]);
     } catch (error: any) {
       console.error('Error fetching data:', error);
@@ -95,9 +112,9 @@ export default function Home() {
           >
             <input
               type="text"
-              placeholder="Enter GitHub Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter GitHub Profile URL"
+              value={githubUrl}
+              onChange={(e) => setGithubUrl(e.target.value)}
               className="col-span-6 p-3 text-base bg-white text-black border-none rounded"
             />
             <button
@@ -116,14 +133,13 @@ export default function Home() {
               borderTopStyle: 'dashed',
               borderTopWidth: '3px',
               borderTopColor: '#39E42C',
-              borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+              borderImage:
+                'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
             }}
           ></div>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
-
-          {/* {userProfile && <UserProfileComponent userProfile={userProfile} />} */}
 
           {userProfile && (
             <>
@@ -137,7 +153,8 @@ export default function Home() {
                   borderTopStyle: 'dashed',
                   borderTopWidth: '3px',
                   borderTopColor: '#39E42C',
-                  borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+                  borderImage:
+                    'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
                 }}
               ></div>
             </>
@@ -155,7 +172,8 @@ export default function Home() {
                   borderTopStyle: 'dashed',
                   borderTopWidth: '3px',
                   borderTopColor: '#39E42C',
-                  borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+                  borderImage:
+                    'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
                 }}
               ></div>
             </>
