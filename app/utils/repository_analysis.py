@@ -3,6 +3,7 @@
 import os
 import re
 import logging
+import math 
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -60,27 +61,53 @@ def calculate_key_metrics(repo_data):
             "engagement_score": 0.0,
         }
 
+def compute_overall_score(metrics):
+    try:
+        stars = metrics.get('stars', 0)
+        forks = metrics.get('forks', 0)
+        issues_resolution_rate = metrics.get('issues_resolution_rate', 0.0)
+        engagement_score = metrics.get('engagement_score', 0.0)
+
+        # Apply logarithmic scaling to stars and forks to naturally increase scores
+        stars_score = min(40, math.log10(stars + 1) * 10)
+        forks_score = min(20, math.log10(forks + 1) * 5)
+        issues_score = issues_resolution_rate * 20  # Since issues_resolution_rate is between 0 and 1
+        engagement_component = min(20, math.log10(engagement_score + 1) * 5)
+
+        # Sum up to get the overall score
+        overall_score = stars_score + forks_score + issues_score + engagement_component
+
+        # Ensure the score is between 0 and 100
+        overall_score = min(100, max(0, overall_score))
+
+        logger.info(f"Calculated overall score: {overall_score}")
+        return int(overall_score)
+
+    except Exception as e:
+        logger.exception(f"Error calculating overall score: {str(e)}")
+        return 0  # Return zero if an error occurs
+
 def generate_repo_analysis(metrics):
     try:
         # Build the prompt dynamically based on available metrics
         prompt_lines = [
-            "Analyze the following repository metrics and provide insights:",
             f"Repository: {metrics.get('repo_name', 'Unknown')}",
             f"Stars: {metrics.get('stars', 0)}",
             f"Forks: {metrics.get('forks', 0)}",
             f"Open Issues: {metrics.get('open_issues', 0)}",
+            f"Closed Issues: {metrics.get('closed_issues', 0)}",
             f"Watchers: {metrics.get('watchers', 0)}",
             f"Forks to Stars Ratio: {metrics.get('forks_to_stars_ratio', 0.0):.2f}",
             f"Issues Resolution Rate: {metrics.get('issues_resolution_rate', 0.0):.2f}",
             f"Engagement Score: {metrics.get('engagement_score', 0.0):.2f}",
             "",
-            "Provide a comprehensive analysis in a single paragraph. Include insights on:",
-            "1. Overall repository health and popularity",
-            "2. Community engagement and interest",
-            "3. Project maintenance and issue management",
-            "4. Potential areas for improvement",
-            "",
-            "Also, provide an overall score for the repository health on a scale of 0-100."
+            "Analyze the repository based on the metrics above.",
+            "Provide a comprehensive analysis in exactly four sentences, focusing on positive aspects and strengths of the repository.",
+            "Include insights on:",
+            "- Overall repository health and popularity",
+            "- Community engagement and interest",
+            "- Project maintenance and issue management",
+            "- Potential areas for improvement",
         ]
         prompt = "\n".join(prompt_lines)
 

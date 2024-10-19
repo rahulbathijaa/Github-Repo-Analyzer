@@ -1,5 +1,3 @@
-// /app/page.tsx
-
 "use client";
 
 import { useState } from 'react';
@@ -23,30 +21,48 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchUserProfile = async () => {
-    const response = await fetch(`http://localhost:8000/user/${username}`);
-    if (!response.ok) {
-      throw new Error('User not found');
+    try {
+      const response = await fetch(`http://localhost:8000/user/${username}`);
+      if (!response.ok) {
+        throw new Error('User not found');
+      }
+      const data = await response.json();
+      console.log('User Profile:', data); // Log user profile data
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      setError('Error fetching user profile.');
     }
-    const data = await response.json();
-    setUserProfile(data);
   };
 
   const fetchRepoAnalysis = async () => {
-    const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
-    if (!response.ok) {
-      throw new Error('Error fetching repo analysis');
+    try {
+      const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
+      if (!response.ok) {
+        throw new Error('Error fetching repo analysis');
+      }
+      const data = await response.json();
+      console.log('Repo Analysis:', data); // Log repo analysis data
+      setRepoAnalysis(data);
+    } catch (error) {
+      console.error('Error fetching repo analysis:', error);
+      setError('Error fetching repo analysis.');
     }
-    const data = await response.json();
-    setRepoAnalysis(data);
   };
 
   const fetchLanguageCommits = async () => {
-    const response = await fetch(`http://localhost:8000/repos/commits/${username}`);
-    if (!response.ok) {
-      throw new Error('Error fetching language commits');
+    try {
+      const response = await fetch(`http://localhost:8000/repos/commits/${username}`);
+      if (!response.ok) {
+        throw new Error('Error fetching language commits');
+      }
+      const data = await response.json();
+      console.log('Language Commits:', data); // Log heatmap data
+      setHeatmapData(data);
+    } catch (error) {
+      console.error('Error fetching language commits:', error);
+      setError('Error fetching language commits.');
     }
-    const data = await response.json();
-    setHeatmapData(data);
   };
 
   const fetchAllData = async () => {
