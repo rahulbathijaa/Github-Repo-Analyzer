@@ -18,14 +18,14 @@ const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalysis }) =>
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p><strong>Primary Language:</strong> {repoAnalysis.primary_language || 'N/A'}</p>
-          <p><strong>Stars:</strong> {repoAnalysis.stargazers_count || 0}</p>
-          <p><strong>Forks:</strong> {repoAnalysis.forks_count || 0}</p>
+          <p><strong>Stars:</strong> {repoAnalysis.stars || 0}</p>
+          <p><strong>Forks:</strong> {repoAnalysis.forks || 0}</p>
+          <p><strong>Watchers:</strong> {repoAnalysis.watchers || 0}</p>
         </div>
         <div>
-          <p><strong>Open Issues:</strong> {repoAnalysis.open_issues_count || 0}</p>
-          <p><strong>Watchers:</strong> {repoAnalysis.watchers_count || 0}</p>
-          <p><strong>Created On:</strong> {repoAnalysis.created_at ? new Date(repoAnalysis.created_at).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Open Issues:</strong> {repoAnalysis.open_issues || 0}</p>
+          <p><strong>Forks to Stars Ratio:</strong> {repoAnalysis.forks_to_stars_ratio.toFixed(2)}</p>
+          <p><strong>Issues Resolution Rate:</strong> {(repoAnalysis.issues_resolution_rate * 100).toFixed(2)}%</p>
         </div>
       </div>
       
@@ -33,11 +33,6 @@ const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalysis }) =>
         <h3 className="text-xl font-semibold">Analysis</h3>
         <p>{repoAnalysis.analysis}</p>
       </div>
-      
-      {/* <div>
-        <h3 className="text-xl font-semibold">Description</h3>
-        <p>{repoAnalysis.description || 'No description available.'}</p>
-      </div> */}
     </div>
   );
 };
