@@ -5,6 +5,7 @@ import UserProfileComponent from '../components/UserProfile';
 import RepoAnalysisComponent from '../components/RepoAnalysis';
 import LanguageHeatmap from '../components/LanguageHeatmap';
 import { UserProfile, RepoAnalysis } from '../types';
+import Image from 'next/image';
 
 interface HeatmapData {
   language: string;
@@ -86,7 +87,7 @@ export default function Home() {
 
   return (
     <div
-      className="pt-16"
+      className="pt-16 pb-8"
       style={{
         backgroundColor: 'black',
         color: 'white',
@@ -178,11 +179,39 @@ export default function Home() {
           )}
 
           {heatmapData.length > 0 && (
-            <div style={{ marginTop: '20px' }}>
-              <h2>Language Usage Over Time (Based on Commit Sizes)</h2>
+            <div style={{ marginTop: '24px' }}>
+              <h2 style={{ fontSize: '2em' }}>Language Usage Over Time (Based on Commit Sizes)</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
           )}
+
+          {/* New mini footer section */}
+          <div
+            style={{
+              borderTop: '2px dashed #39E42C',
+              marginTop: '48px',
+              paddingTop: '24px',
+              gridColumn: '1 / -1',
+              borderTopStyle: 'dashed',
+              borderTopWidth: '3px',
+              borderTopColor: '#39E42C',
+              borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+            }}
+          >
+            <div className="flex justify-end items-center">
+              <div className="text-right">
+                <p className="text-lg mb-2">Built by Rahul Bathija</p>
+                <div className="flex justify-end space-x-4">
+                  <a href="https://twitter.com/yourtwitterhandle" target="_blank" rel="noopener noreferrer">
+                    <Image src="/path/to/twitter-icon.png" alt="Twitter" width={24} height={24} />
+                  </a>
+                  <a href="https://github.com/yourgithubhandle" target="_blank" rel="noopener noreferrer">
+                    <Image src="/path/to/github-icon.png" alt="GitHub" width={24} height={24} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

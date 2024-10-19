@@ -56,16 +56,16 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
 
   // Assign colors to languages
   const colors = [
-    '#8884d8',
-    '#82ca9d',
-    '#ffc658',
-    '#ff8042',
-    '#8dd1e1',
-    '#a4de6c',
-    '#d0ed57',
-    '#a28fd0',
-    '#f56991',
-    '#d0a57d',
+    '#39E42C',
+    '#FA742F',
+    '#9F5EF9',
+    '#FC57F6',
+    '#70BAFF',
+    '#FCD857',
+    '#FF4040',
+    '#40FFFF',
+    '#5040FF',
+    '#40FFA3',
   ];
 
   const languageColors: { [language: string]: string } = {};
@@ -73,14 +73,34 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
     languageColors[lang] = colors[index % colors.length];
   });
 
+  const CustomLegend = (props: any) => {
+    const { payload } = props;
+    return (
+      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginTop: '24px' }}>
+        {payload.map((entry: any, index: number) => (
+          <li key={`item-${index}`} style={{ display: 'flex', alignItems: 'center', marginRight: '16px', marginBottom: '8px' }}>
+            <div style={{
+              width: '20px',
+              height: '20px',
+              backgroundColor: entry.color,
+              borderRadius: '4px',
+              marginRight: '8px'
+            }} />
+            <span style={{ fontSize: '14px' }}>{entry.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <div style={{ width: '100%', height: 400 }}>
       <ResponsiveContainer>
-        <BarChart data={chartData}>
+        <BarChart data={chartData} margin={{ bottom: 24 }}>
           <XAxis dataKey="year" />
-          <YAxis />
+          {/* <YAxis /> */}
           <Tooltip />
-          <Legend />
+          <Legend content={<CustomLegend />} verticalAlign="bottom" height={36} />
           {languages.map((lang) => (
             <Bar
               key={lang}
