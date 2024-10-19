@@ -125,17 +125,19 @@ export default function Home() {
             </button>
           </form>
           
-          <div
-            style={{
-              borderTop: '2px dashed #39E42C',
-              marginTop: '48px',
-              gridColumn: '1 / -1',
-              borderTopStyle: 'dashed',
-              borderTopWidth: '3px',
-              borderTopColor: '#39E42C',
-              borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
-            }}
-          ></div>
+          {userProfile || repoAnalysis || heatmapData.length > 0 ? (
+            <div
+              style={{
+                borderTop: '2px dashed #39E42C',
+                marginTop: '48px',
+                gridColumn: '1 / -1',
+                borderTopStyle: 'dashed',
+                borderTopWidth: '3px',
+                borderTopColor: '#39E42C',
+                borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+              }}
+            ></div>
+          ) : null}
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
@@ -180,7 +182,7 @@ export default function Home() {
 
           {heatmapData.length > 0 && (
             <div style={{ marginTop: '24px' }}>
-              <h2 style={{ fontSize: '2em' }}>Language Usage Over Time (Based on Commit Sizes)</h2>
+              <h2 style={{ fontSize: '2em' }}>Language Usage Over Time</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
           )}
@@ -202,11 +204,11 @@ export default function Home() {
               <div className="text-right">
                 <p className="text-lg mb-2">Built by Rahul Bathija</p>
                 <div className="flex justify-end space-x-4">
-                  <a href="https://twitter.com/yourtwitterhandle" target="_blank" rel="noopener noreferrer">
-                    <Image src="/path/to/twitter-icon.png" alt="Twitter" width={24} height={24} />
+                  <a href="https://x.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
+                    <Image src="/././twitterlogo.png" alt="Twitter" width={24} height={24} />
                   </a>
-                  <a href="https://github.com/yourgithubhandle" target="_blank" rel="noopener noreferrer">
-                    <Image src="/path/to/github-icon.png" alt="GitHub" width={24} height={24} />
+                  <a href="https://github.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
+                    <Image src="/././githublogo.png" alt="GitHub" width={24} height={24} />
                   </a>
                 </div>
               </div>
