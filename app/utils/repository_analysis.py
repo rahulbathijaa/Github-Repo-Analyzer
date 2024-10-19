@@ -65,17 +65,37 @@ def compute_overall_score(metrics):
     try:
         stars = metrics.get('stars', 0)
         forks = metrics.get('forks', 0)
+        open_issues = metrics.get('open_issues', 0)
         issues_resolution_rate = metrics.get('issues_resolution_rate', 0.0)
         engagement_score = metrics.get('engagement_score', 0.0)
 
-        # Apply logarithmic scaling to stars and forks to naturally increase scores
-        stars_score = min(40, math.log10(stars + 1) * 10)
-        forks_score = min(20, math.log10(forks + 1) * 5)
-        issues_score = issues_resolution_rate * 20  # Since issues_resolution_rate is between 0 and 1
-        engagement_component = min(20, math.log10(engagement_score + 1) * 5)
+        # Stars score (max 35 points)
+        stars_score = min(35, math.log(stars + 1) * 8)
 
-        # Sum up to get the overall score
-        overall_score = stars_score + forks_score + issues_score + engagement_component
+        # Forks score (max 15 points)
+        forks_score = min(15, math.log(forks + 1) * 4)
+
+        # Engagement component (max 20 points)
+        engagement_component = min(20, math.log(engagement_score + 1) * 5)
+
+        # Issues resolution score (max 20 points)
+        issues_score = issues_resolution_rate * 20
+
+        # Open issues penalty (max -15 points)
+        open_issues_penalty = min(15, open_issues / 5)
+
+        # Base score to ensure a minimum score
+        base_score = 10
+
+        # Calculate the overall score
+        overall_score = (
+            base_score +
+            stars_score +
+            forks_score +
+            engagement_component +
+            issues_score -
+            open_issues_penalty
+        )
 
         # Ensure the score is between 0 and 100
         overall_score = min(100, max(0, overall_score))
@@ -86,6 +106,7 @@ def compute_overall_score(metrics):
     except Exception as e:
         logger.exception(f"Error calculating overall score: {str(e)}")
         return 0  # Return zero if an error occurs
+
 
 def generate_repo_analysis(metrics):
     try:
