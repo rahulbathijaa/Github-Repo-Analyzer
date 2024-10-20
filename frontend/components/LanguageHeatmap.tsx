@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   LegendProps,
 } from 'recharts';
+import { Payload } from 'recharts/types/component/DefaultLegendContent';
 
 interface HeatmapData {
   language: string;
@@ -17,15 +18,6 @@ interface HeatmapData {
 
 interface Props {
   data: HeatmapData[];
-}
-
-interface LegendPayload {
-  value: any;
-  color?: string;
-  type?: string;
-  id?: any;
-  payload?: any;
-  [key: string]: any;
 }
 
 const LanguageHeatmap: React.FC<Props> = ({ data }) => {
@@ -93,7 +85,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
           marginTop: '24px',
         }}
       >
-        {payload?.map((entry: LegendPayload, index: number) => (
+        {payload?.map((entry: Payload<any>, index: number) => (
           <li
             key={`item-${index}`}
             style={{
