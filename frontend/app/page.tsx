@@ -14,6 +14,7 @@ interface HeatmapData {
 }
 
 export default function Home() {
+  const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis | null>(null);
@@ -23,7 +24,7 @@ export default function Home() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/user/${username}`);
+      const response = await fetch(`${BACKEND_BASE_URL}/user/${username}`);
       if (!response.ok) {
         throw new Error('User not found');
       }
@@ -38,7 +39,7 @@ export default function Home() {
 
   const fetchRepoAnalysis = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/repos/analyze/${username}`);
+      const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
       if (!response.ok) {
         throw new Error('Error fetching repo analysis');
       }
