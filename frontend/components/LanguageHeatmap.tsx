@@ -85,7 +85,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
           marginTop: '24px',
         }}
       >
-        {payload?.map((entry: Payload<string | number>, index: number) => (
+        {payload?.map((entry: Payload, index: number) => (
           <li
             key={`item-${index}`}
             style={{
