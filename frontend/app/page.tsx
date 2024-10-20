@@ -1,4 +1,4 @@
-// /frontend/page.tsx
+// /frontend/app/page.tsx
 
 "use client";
 
@@ -56,7 +56,7 @@ export default function Home() {
 
   const fetchLanguageCommits = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/repos/commits/${username}`);
+      const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
       if (!response.ok) {
         throw new Error('Error fetching language commits');
       }
@@ -80,7 +80,7 @@ export default function Home() {
         fetchRepoAnalysis(),
         fetchLanguageCommits(),
       ]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching data:', error);
       setError('An error occurred while fetching data.');
     } finally {
