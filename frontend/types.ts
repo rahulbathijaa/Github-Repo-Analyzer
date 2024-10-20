@@ -14,13 +14,15 @@ export interface UserProfile {
     repo_name: string;
     overall_score: number;
     primary_language: string;
-    stargazers_count: number;
-    forks_count: number;
-    open_issues_count: number;
-    watchers_count: number;
+    stargazers_count?: number;
+    forks_count?: number;
+    open_issues_count?: number;
+    watchers_count?: number;
     created_at: string;
     analysis: string;
     description?: string;
+    forks_to_stars_ratio?: number;
+    issues_resolution_rate?: number;
   }
   
   export interface LanguageUsage {
