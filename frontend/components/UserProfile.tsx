@@ -1,7 +1,6 @@
-// /frontend/components/UserProfile.tsx
-
 import React from 'react';
 import { UserProfile } from '../types';
+import Image from 'next/image';
 
 interface UserProfileProps {
   userProfile: UserProfile;
@@ -13,22 +12,24 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   const currentDate = new Date();
   let yearsOnGitHub = currentDate.getFullYear() - createdAtDate.getFullYear();
 
-  // Adjust if the current date is before the anniversary
   if (
     currentDate.getMonth() < createdAtDate.getMonth() ||
-    (currentDate.getMonth() === createdAtDate.getMonth() && currentDate.getDate() < createdAtDate.getDate())
+    (currentDate.getMonth() === createdAtDate.getMonth() &&
+      currentDate.getDate() < createdAtDate.getDate())
   ) {
     yearsOnGitHub -= 1;
   }
 
   return (
-    <div style={{ 
-      marginTop: '20px',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(6, 1fr)',
-      gap: '20px',
-      alignItems: 'center'
-    }}>
+    <div
+      style={{
+        marginTop: '20px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 1fr)',
+        gap: '20px',
+        alignItems: 'center',
+      }}
+    >
       <div style={{ gridColumn: '1 / 6' }}>
         <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>
           {userProfile.name || userProfile.login}
@@ -47,10 +48,11 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
         </p>
       </div>
       <div style={{ gridColumn: '6 / 7', justifySelf: 'end' }}>
-        <img
+        <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
-          width="100"
+          width={100}
+          height={100}
           style={{ borderRadius: '50%' }}
         />
       </div>
@@ -59,4 +61,3 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
 };
 
 export default UserProfileComponent;
-

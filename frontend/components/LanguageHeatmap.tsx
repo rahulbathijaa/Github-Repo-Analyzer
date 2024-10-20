@@ -1,14 +1,13 @@
-// /frontend/components/LanguageHeatmap.tsx
-
 import React from 'react';
 import {
   BarChart,
   Bar,
   XAxis,
-  YAxis,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LegendProps,
+  LegendPayload,
 } from 'recharts';
 
 interface HeatmapData {
@@ -39,7 +38,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
     });
 
     const chartData = Object.keys(dataByYear).map((year) => {
-      const entry: { [key: string]: any } = { year };
+      const entry: { [key: string]: string | number } = { year };
       allLanguages.forEach((lang) => {
         entry[lang] = dataByYear[year][lang] || 0;
       });
@@ -47,7 +46,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
     });
 
     // Sort data by year
-    chartData.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+    chartData.sort((a, b) => Number(a.year) - Number(b.year));
 
     return { chartData, languages: Array.from(allLanguages) };
   };
@@ -73,19 +72,38 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
     languageColors[lang] = colors[index % colors.length];
   });
 
-  const CustomLegend = (props: any) => {
+  const CustomLegend: React.FC<LegendProps> = (props) => {
     const { payload } = props;
     return (
-      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginTop: '24px' }}>
-        {payload.map((entry: any, index: number) => (
-          <li key={`item-${index}`} style={{ display: 'flex', alignItems: 'center', marginRight: '16px', marginBottom: '8px' }}>
-            <div style={{
-              width: '20px',
-              height: '20px',
-              backgroundColor: entry.color,
-              borderRadius: '4px',
-              marginRight: '8px'
-            }} />
+      <ul
+        style={{
+          listStyle: 'none',
+          padding: 0,
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          marginTop: '24px',
+        }}
+      >
+        {payload?.map((entry: LegendPayload, index: number) => (
+          <li
+            key={`item-${index}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginRight: '16px',
+              marginBottom: '8px',
+            }}
+          >
+            <div
+              style={{
+                width: '20px',
+                height: '20px',
+                backgroundColor: entry.color || '#000',
+                borderRadius: '4px',
+                marginRight: '8px',
+              }}
+            />
             <span style={{ fontSize: '14px' }}>{entry.value}</span>
           </li>
         ))}
@@ -102,12 +120,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
           <Tooltip />
           <Legend content={<CustomLegend />} verticalAlign="bottom" height={36} />
           {languages.map((lang) => (
-            <Bar
-              key={lang}
-              dataKey={lang}
-              stackId="a"
-              fill={languageColors[lang]}
-            />
+            <Bar key={lang} dataKey={lang} stackId="a" fill={languageColors[lang]} />
           ))}
         </BarChart>
       </ResponsiveContainer>
