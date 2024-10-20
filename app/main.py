@@ -12,6 +12,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",  # Frontend origin
     "https://localhost:3000",
+    "https://github-repo-analyzer.vercel.app/",
 ]
 
 app.add_middleware(
