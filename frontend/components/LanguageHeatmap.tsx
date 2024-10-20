@@ -7,7 +7,6 @@ import {
   Legend,
   ResponsiveContainer,
   LegendProps,
-  LegendPayload,
 } from 'recharts';
 
 interface HeatmapData {
@@ -18,6 +17,15 @@ interface HeatmapData {
 
 interface Props {
   data: HeatmapData[];
+}
+
+interface LegendPayload {
+  value: any;
+  color?: string;
+  type?: string;
+  id?: any;
+  payload?: any;
+  [key: string]: any;
 }
 
 const LanguageHeatmap: React.FC<Props> = ({ data }) => {
