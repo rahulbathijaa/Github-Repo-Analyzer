@@ -1,5 +1,3 @@
-// /frontend/app/page.tsx
-
 "use client";
 
 import { useState } from 'react';
@@ -16,7 +14,6 @@ interface HeatmapData {
 }
 
 export default function Home() {
-  const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis | null>(null);
@@ -26,12 +23,12 @@ export default function Home() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}/user/${username}`);
+      const response = await fetch(`/api/user/${username}`);
       if (!response.ok) {
         throw new Error('User not found');
       }
       const data = await response.json();
-      console.log('User Profile:', data); // Log user profile data
+      console.log('User Profile:', data);
       setUserProfile(data);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -41,12 +38,12 @@ export default function Home() {
 
   const fetchRepoAnalysis = async () => {
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
+      const response = await fetch(`/api/repos/commits/${username}`);
       if (!response.ok) {
         throw new Error('Error fetching repo analysis');
       }
       const data = await response.json();
-      console.log('Repo Analysis:', data); // Log repo analysis data
+      console.log('Repo Analysis:', data);
       setRepoAnalysis(data);
     } catch (error) {
       console.error('Error fetching repo analysis:', error);
@@ -56,12 +53,12 @@ export default function Home() {
 
   const fetchLanguageCommits = async () => {
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
+      const response = await fetch(`/api/repos/commits/${username}`);
       if (!response.ok) {
         throw new Error('Error fetching language commits');
       }
       const data = await response.json();
-      console.log('Language Commits:', data); // Log heatmap data
+      console.log('Language Commits:', data);
       setHeatmapData(data);
     } catch (error) {
       console.error('Error fetching language commits:', error);
@@ -80,7 +77,7 @@ export default function Home() {
         fetchRepoAnalysis(),
         fetchLanguageCommits(),
       ]);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Error fetching data:', error);
       setError('An error occurred while fetching data.');
     } finally {
@@ -145,8 +142,6 @@ export default function Home() {
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
 
-          {/* {userProfile && <UserProfileComponent userProfile={userProfile} />} */}
-
           {userProfile && (
             <>
               <UserProfileComponent userProfile={userProfile} />
@@ -190,7 +185,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* New mini footer section */}
+          {/* Mini footer section */}
           <div
             style={{
               borderTop: '2px dashed #39E42C',
@@ -208,10 +203,10 @@ export default function Home() {
                 <p className="text-lg mb-2">Built by Rahul Bathija</p>
                 <div className="flex justify-end space-x-4">
                   <a href="https://x.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
-                    <Image src="/././twitterlogo.png" alt="Twitter" width={24} height={24} />
+                    <Image src="/twitterlogo.png" alt="Twitter" width={24} height={24} />
                   </a>
                   <a href="https://github.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
-                    <Image src="/././githublogo.png" alt="GitHub" width={24} height={24} />
+                    <Image src="/githublogo.png" alt="GitHub" width={24} height={24} />
                   </a>
                 </div>
               </div>
