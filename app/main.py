@@ -12,7 +12,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",  # Frontend origin
     "https://localhost:3000",
-    "github-repo-analyzer.vercel.app",
+    "https://github-repo-analyzer.vercel.app",
     "https://github-repo-analyzer-git-main-rahul-bathijas-projects.vercel.app",
     "https://github-repo-analyzer-48oqcxj38-rahul-bathijas-projects.vercel.app",
 ]
