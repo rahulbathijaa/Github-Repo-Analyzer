@@ -17,7 +17,7 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
 # Consolidated fetch function that pulls both user profile and repos
 async def fetch_user_profile_and_repos(username: str):
