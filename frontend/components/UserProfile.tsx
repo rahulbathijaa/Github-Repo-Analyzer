@@ -31,7 +31,7 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
       }}
     >
       <div style={{ gridColumn: '1 / 6' }}>
-        <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>
+        <h2 style={{ fontSize: '2em', marginBottom: '10px' }}> 
           {userProfile.name || userProfile.login}
         </h2>
         <p style={{ fontSize: '14px', marginBottom: '5px' }}>{userProfile.bio}</p>

@@ -105,7 +105,7 @@ export default function Home() {
         }}
       >
         <div style={{ gridColumn: '2 / 12' }}>
-          <h1 className="text-6xl mb-6">GitHub Repo Analyzer</h1>
+          <h1 className="text-3xl mb-6">GitHub Repo Analyzer</h1>
           <form
             className="mt-6 grid grid-cols-12 gap-4"
             onSubmit={(e) => {

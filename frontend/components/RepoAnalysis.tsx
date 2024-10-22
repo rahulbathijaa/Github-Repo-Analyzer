@@ -11,11 +11,9 @@ const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalyses }) =>
   return (
     <div className="col-span-10 flex flex-col gap-8">
       {repoAnalyses.map((repoAnalysis, index) => (
-        <div key={index} className="flex flex-col gap-4 border-b pb-4 mb-4">
-          <h2 className="text-2xl font-bold">Repo Spotlight: {repoAnalysis.repo_name}</h2>
-          
-          <div className="text-4xl font-bold">
-            Overall Score: {repoAnalysis.overall_score}
+        <div key={index} className="flex flex-col gap-4 pb-4 mb-4">
+          <div className="text-3xl font-bold">
+            <span>Repo Spotlight: {repoAnalysis.repo_name} || Overall Score: {repoAnalysis.overall_score}</span>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
