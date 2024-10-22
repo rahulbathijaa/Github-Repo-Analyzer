@@ -2,6 +2,7 @@
 import os
 from dotenv import load_dotenv
 import httpx
+import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
@@ -23,12 +24,19 @@ async def get_repo_info(owner: str, repo_name: str):
         response.raise_for_status()
         return response.json()
 
-async def graphql_query(query: str, variables: dict):
+async def graphql_query(query: str, variables: dict, retries=3, backoff_factor=0.5):
     async with httpx.AsyncClient(timeout=30.0) as client:  # Set a 30s timeout
-        response = await client.post(
-            GITHUB_GRAPHQL_URL,
-            json={"query": query, "variables": variables},
-            headers=HEADERS
-        )
-    response.raise_for_status()
-    return response.json()
+        for attempt in range(retries):
+            try:
+                response = await client.post(
+                    GITHUB_GRAPHQL_URL,
+                    json={"query": query, "variables": variables},
+                    headers=HEADERS
+                )
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 502 and attempt < retries - 1:
+                    await asyncio.sleep(backoff_factor * (2 ** attempt))
+                    continue
+                raise

@@ -12,6 +12,7 @@ from app.models.models import (
 from typing import List
 import logging
 from collections import defaultdict
+import httpx
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -127,6 +128,9 @@ async def get_user_profile(username: str):
     except HTTPException as exc:
         logger.error(f"HTTPException in get_user_profile: {exc.detail}")
         raise exc  # Re-raise HTTP exceptions to be handled by FastAPI
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"HTTPStatusError in get_user_profile: {exc}")
+        raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
     except Exception as exc:
         logger.exception(f"An error occurred in get_user_profile: {str(exc)}")
         raise HTTPException(status_code=500, detail=str(exc))
@@ -169,6 +173,9 @@ async def analyze_repositories(username: str):
     except HTTPException as exc:
         logger.error(f"HTTPException in analyze_repositories: {exc.detail}")
         raise exc  # Re-raise HTTP exceptions to be handled by FastAPI
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"HTTPStatusError in analyze_repositories: {exc}")
+        raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
     except Exception as exc:
         logger.exception(f"An error occurred in analyze_repositories: {str(exc)}")
         raise HTTPException(status_code=500, detail=str(exc))
@@ -238,6 +245,9 @@ async def get_commits_by_language(username: str):
     except HTTPException as exc:
         logger.error(f"HTTPException in get_commits_by_language: {exc.detail}")
         raise exc
+    except httpx.HTTPStatusError as exc:
+        logger.error(f"HTTPStatusError in get_commits_by_language: {exc}")
+        raise HTTPException(status_code=exc.response.status_code, detail=str(exc))
     except Exception as exc:
         logger.exception(f"An error occurred in get_commits_by_language: {str(exc)}")
         raise HTTPException(status_code=500, detail=str(exc))
