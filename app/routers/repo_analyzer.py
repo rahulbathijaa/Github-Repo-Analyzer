@@ -187,22 +187,8 @@ async def get_commits_by_language(username: str):
         language_usage = defaultdict(lambda: defaultdict(int))
 
         for repo in repos:
-            if repo is None:
-                logger.warning(f"Encountered None repo for user {username}")
-                continue
-
             repo_languages = [edge['node']['name'] for edge in repo.get('languages', {}).get('edges', [])]
-            default_branch_ref = repo.get('defaultBranchRef')
-            if default_branch_ref is None:
-                logger.warning(f"No default branch ref for repo {repo.get('name', 'unknown')} of user {username}")
-                continue
-
-            target = default_branch_ref.get('target')
-            if target is None:
-                logger.warning(f"No target for default branch in repo {repo.get('name', 'unknown')} of user {username}")
-                continue
-
-            commits = target.get('history', {}).get('edges', [])
+            commits = repo.get('defaultBranchRef', {}).get('target', {}).get('history', {}).get('edges', [])
 
             for commit in commits:
                 commit_node = commit['node']
