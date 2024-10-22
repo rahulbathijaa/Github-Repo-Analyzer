@@ -13,7 +13,7 @@ const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalyses }) =>
       {repoAnalyses.map((repoAnalysis, index) => (
         <div key={index} className="flex flex-col gap-4 pb-4 mb-4">
           <div className="text-3xl font-bold">
-            <span>Repo Spotlight: {repoAnalysis.repo_name} || Overall Score: {repoAnalysis.overall_score}</span>
+            <span>Repo Spotlight: {repoAnalysis.repo_name} | Overall Score: {repoAnalysis.overall_score}</span>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
