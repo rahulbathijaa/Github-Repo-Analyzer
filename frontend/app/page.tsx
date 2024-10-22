@@ -19,7 +19,7 @@ export default function Home() {
   const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis | null>(null);
+  const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis[]>([]); // Change to an array
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ export default function Home() {
       }
       const data = await response.json();
       console.log('Repo Analysis:', data); // Log repo analysis data
-      setRepoAnalysis(data);
+      setRepoAnalysis(data); // Set as an array
     } catch (error) {
       console.error('Error fetching repo analysis:', error);
       setError('Error fetching repo analysis.');
@@ -115,7 +115,7 @@ export default function Home() {
           >
             <input
               type="text"
-              placeholder="Enter GitHub Username"
+              placeholder="Enter a GitHub User Username (no org / enterprise accounts)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="col-span-6 p-3 text-base bg-white text-black border-none rounded"
@@ -128,7 +128,7 @@ export default function Home() {
             </button>
           </form>
           
-          {userProfile || repoAnalysis || heatmapData.length > 0 ? (
+          {userProfile || repoAnalysis.length > 0 || heatmapData.length > 0 ? (
             <div
               style={{
                 borderTop: '2px dashed #39E42C',
@@ -144,8 +144,6 @@ export default function Home() {
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
-
-          {/* {userProfile && <UserProfileComponent userProfile={userProfile} />} */}
 
           {userProfile && (
             <>
@@ -165,9 +163,9 @@ export default function Home() {
             </>
           )}
 
-          {repoAnalysis && (
+          {repoAnalysis.length > 0 && (
             <>
-              <RepoAnalysisComponent repoAnalysis={repoAnalysis} />
+              <RepoAnalysisComponent repoAnalyses={repoAnalysis} /> {/* Pass as array */}
               <div
                 style={{
                   borderTop: '2px dashed #39E42C',

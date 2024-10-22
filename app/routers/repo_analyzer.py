@@ -136,7 +136,7 @@ async def get_user_profile(username: str):
         raise HTTPException(status_code=500, detail=str(exc))
 
 # Repo analyzer route
-@router.get("/repos/analyze/{username}", response_model=RepoAnalysis)
+@router.get("/repos/analyze/{username}", response_model=List[RepoAnalysis])
 async def analyze_repositories(username: str):
     try:
         # Fetch user data, including repositories
@@ -159,16 +159,23 @@ async def analyze_repositories(username: str):
                 status_code=404, detail="No owned repositories found for this user."
             )
 
-        # Find the most popular repo by stars from the filtered user-owned repos
-        most_popular_repo = max(user_repos, key=lambda r: r.get("stargazerCount", 0))
-        logger.info(f"Most popular repository for {username}: {most_popular_repo}")
+        # Sort the user_repos by stargazerCount in descending order
+        sorted_repos = sorted(user_repos, key=lambda r: r.get("stargazerCount", 0), reverse=True)
+        logger.info(f"Sorted repositories by stars for {username}: {sorted_repos}")
 
-        # Call the chain-of-thought analysis function
-        analysis_result = chain_of_thought_analysis(most_popular_repo)
-        logger.info(f"Analysis result for {username}: {analysis_result}")
+        # Take the top two repositories
+        top_two_repos = sorted_repos[:2]
+        logger.info(f"Top two repositories for {username}: {top_two_repos}")
 
-        # Return the analysis result
-        return RepoAnalysis(**analysis_result)
+        # Perform analysis on each of the top two repositories
+        analysis_results = []
+        for repo in top_two_repos:
+            analysis_result = chain_of_thought_analysis(repo)
+            analysis_results.append(RepoAnalysis(**analysis_result))
+            logger.info(f"Analysis result for repo {repo['name']}: {analysis_result}")
+
+        # Return the list of analysis results
+        return analysis_results
 
     except HTTPException as exc:
         logger.error(f"HTTPException in analyze_repositories: {exc.detail}")
