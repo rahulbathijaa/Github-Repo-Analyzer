@@ -137,7 +137,7 @@ export default function Home() {
             />
             <button
               type="submit"
-              className="col-span-12 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded mt-4 md:mt-0"
+              className="col-span-12 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded mt-2 md:mt-0"
             >
               Go
             </button>
@@ -202,7 +202,7 @@ export default function Home() {
           )}
 
           {heatmapData.length > 0 && (
-            <div style={{ marginTop: '24px' }}>
+            <div style={{ marginTop: '24px', marginBottom: '48px' }}>
               <h2 style={{ fontSize: '2em' }}>Language Usage Over Time</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
