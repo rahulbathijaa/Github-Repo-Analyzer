@@ -83,6 +83,7 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
           flexWrap: 'wrap',
           justifyContent: 'center',
           marginTop: '24px',
+          marginBottom: '24px', // Add bottom margin for spacing
         }}
       >
         {payload?.map((entry: Payload, index: number) => (
@@ -112,13 +113,13 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
-      <ResponsiveContainer>
+    <div style={{ width: '100%', height: 'auto', minHeight: 400, paddingBottom: '48px' }}>
+      <ResponsiveContainer height={400}>
         <BarChart data={chartData} margin={{ bottom: 24 }}>
           <XAxis dataKey="year" />
           {/* <YAxis /> */}
           <Tooltip />
-          <Legend content={<CustomLegend />} verticalAlign="bottom" height={36} />
+          <Legend content={<CustomLegend />} verticalAlign="bottom" height={72} />
           {languages.map((lang) => (
             <Bar key={lang} dataKey={lang} stackId="a" fill={languageColors[lang]} />
           ))}

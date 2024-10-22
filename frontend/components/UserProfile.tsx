@@ -21,25 +21,17 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div
-      style={{
-        marginTop: '20px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(6, 1fr)',
-        gap: '20px',
-        alignItems: 'center',
-      }}
-    >
-      <div style={{ gridColumn: '1 / 6' }}>
-        <h2 style={{ fontSize: '3em', marginBottom: '10px' }}> 
+    <div className="mt-5 grid grid-cols-6 gap-5 items-center md:grid-cols-6">
+      <div className="col-span-6 md:col-span-5 order-2 md:order-1">
+        <h2 className="text-3xl md:text-4xl font-bold mb-2">
           {userProfile.name || userProfile.login}
         </h2>
-        <p style={{ fontSize: '14px', marginBottom: '5px' }}>{userProfile.bio}</p>
-        <p style={{ fontSize: '14px', marginBottom: '5px' }}>
+        <p className="text-sm md:text-base mb-1">{userProfile.bio}</p>
+        <p className="text-sm md:text-base mb-1">
           <strong>Years on GitHub:</strong> {yearsOnGitHub}
         </p>
-        <p style={{ fontSize: '14px' }}>
-          <span style={{ marginRight: '15px' }}>
+        <p className="text-sm md:text-base">
+          <span className="mr-4">
             <strong>Followers:</strong> {userProfile.followers}
           </span>
           <span>
@@ -47,13 +39,13 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
           </span>
         </p>
       </div>
-      <div style={{ gridColumn: '6 / 7', justifySelf: 'end' }}>
+      <div className="col-span-6 md:col-span-1 justify-self-center md:justify-self-end order-1 md:order-2 mb-4 md:mb-0">
         <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
           width={100}
           height={100}
-          style={{ borderRadius: '50%' }}
+          className="rounded-full w-24 h-24 md:w-28 md:h-28"
         />
       </div>
     </div>
