@@ -19,7 +19,9 @@ export interface UserProfile {
     forks_count?: number;
     forks?: number;
     open_issues_count?: number;
+    open_issues?: number;
     watchers_count?: number;
+    watchers?: number;
     created_at: string;
     analysis: string;
     description?: string;
