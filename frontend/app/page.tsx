@@ -19,7 +19,7 @@ export default function Home() {
   const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
   const [username, setUsername] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis[]>([]); // Change to an array
+  const [repoAnalysis, setRepoAnalysis] = useState<RepoAnalysis[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +31,7 @@ export default function Home() {
         throw new Error('User not found');
       }
       const data = await response.json();
-      console.log('User Profile:', data); // Log user profile data
+      console.log('User Profile:', data);
       setUserProfile(data);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -46,8 +46,8 @@ export default function Home() {
         throw new Error('Error fetching repo analysis');
       }
       const data = await response.json();
-      console.log('Repo Analysis:', data); // Log repo analysis data
-      setRepoAnalysis(data); // Set as an array
+      console.log('Repo Analysis:', data);
+      setRepoAnalysis(data);
     } catch (error) {
       console.error('Error fetching repo analysis:', error);
       setError('Error fetching repo analysis.');
@@ -61,7 +61,7 @@ export default function Home() {
         throw new Error('Error fetching language commits');
       }
       const data = await response.json();
-      console.log('Language Commits:', data); // Log heatmap data
+      console.log('Language Commits:', data);
       setHeatmapData(data);
     } catch (error) {
       console.error('Error fetching language commits:', error);
@@ -89,25 +89,12 @@ export default function Home() {
   };
 
   return (
-    <div
-      className="pt-16 pb-8"
-      style={{
-        backgroundColor: 'black',
-        color: 'white',
-        minHeight: '100vh',
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-          gap: '24px',
-        }}
-      >
-        <div style={{ gridColumn: '2 / 12' }}>
+    <div className="pt-16 pb-8 bg-black text-white min-h-screen">
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-10 col-start-2">
           <h1 className="text-3xl mb-6">GitHub Repo Analyzer</h1>
           <form
-            className="mt-6 grid grid-cols-12 gap-4 md:grid-cols-12"
+            className="mt-6 grid grid-cols-12 gap-4"
             onSubmit={(e) => {
               e.preventDefault();
               fetchAllData();
@@ -118,11 +105,11 @@ export default function Home() {
               placeholder="Enter a GitHub User Username (no org / enterprise accounts)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="col-span-12 md:col-start-2 md:col-span-6 p-3 text-base bg-white text-black border-none rounded"
+              className="col-span-12 md:col-span-6 p-3 text-base bg-white text-black border-none rounded"
             />
             <button
               type="submit"
-              className="col-span-12 md:col-start-8 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded"
+              className="col-span-12 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded mt-4 md:mt-0"
             >
               Go
             </button>
@@ -165,7 +152,7 @@ export default function Home() {
 
           {repoAnalysis.length > 0 && (
             <>
-              <RepoAnalysisComponent repoAnalyses={repoAnalysis} /> {/* Pass as array */}
+              <RepoAnalysisComponent repoAnalyses={repoAnalysis} />
               <div
                 style={{
                   borderTop: '2px dashed #39E42C',
