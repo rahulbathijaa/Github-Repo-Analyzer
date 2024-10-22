@@ -4,6 +4,7 @@ import logging
 import math
 from dotenv import load_dotenv
 from openai import OpenAI
+import asyncio
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +15,9 @@ load_dotenv()
 
 # Get OpenAI API key from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Create a semaphore to limit concurrent OpenAI API calls
+OPENAI_SEMAPHORE = asyncio.Semaphore(2)  # Adjust the number as needed
 
 def calculate_key_metrics(repo_data):
     try:
@@ -37,7 +41,7 @@ def calculate_key_metrics(repo_data):
             "stars": stars,
             "forks": forks,
             "open_issues": open_issues,
-            "closed_issues": closed_issues,  # Include closed_issues
+            "closed_issues": closed_issues,
             "watchers": watchers,
             "forks_to_stars_ratio": forks_to_stars_ratio,
             "issues_resolution_rate": issues_resolution_rate,
@@ -54,7 +58,7 @@ def calculate_key_metrics(repo_data):
             "stars": 0,
             "forks": 0,
             "open_issues": 0,
-            "closed_issues": 0,  # Include closed_issues
+            "closed_issues": 0,
             "watchers": 0,
             "forks_to_stars_ratio": 0.0,
             "issues_resolution_rate": 0.0,
@@ -107,8 +111,21 @@ def compute_overall_score(metrics):
         logger.exception(f"Error calculating overall score: {str(e)}")
         return 0  # Return zero if an error occurs
 
+async def generate_repo_analysis(metrics):
+    try:
+        async with OPENAI_SEMAPHORE:
+            # Run the synchronous OpenAI API call in a thread
+            result = await asyncio.to_thread(_generate_repo_analysis_sync, metrics)
+            return result
 
-def generate_repo_analysis(metrics):
+    except Exception as e:
+        logger.exception(f"API call error: {str(e)}")
+        # Return default values including all required fields
+        return {
+            "analysis": f"Error calling OpenAI API: {str(e)}"
+        }
+
+def _generate_repo_analysis_sync(metrics):
     try:
         # Build the prompt dynamically based on available metrics
         prompt_lines = [
@@ -150,12 +167,10 @@ def generate_repo_analysis(metrics):
         content = response.choices[0].message.content.strip()
         logger.info(f"API response content: {content}")
 
-        # Since we no longer ask OpenAI to provide the overall score, we don't need to extract it
         analysis = content
 
         return {
             "analysis": analysis
-            # Do not include 'overall_score' here
         }
 
     except Exception as e:
@@ -163,15 +178,14 @@ def generate_repo_analysis(metrics):
         # Return default values including all required fields
         return {
             "analysis": f"Error calling OpenAI API: {str(e)}"
-            # Do not include 'overall_score' here
         }
 
-def chain_of_thought_analysis(repo_data):
+async def chain_of_thought_analysis(repo_data):
     try:
         metrics = calculate_key_metrics(repo_data)
-        overall_score = compute_overall_score(metrics)  # Compute the overall score
-        analysis_result = generate_repo_analysis(metrics)
-        analysis_result['overall_score'] = overall_score  # Add the overall score to the analysis result
+        overall_score = compute_overall_score(metrics)
+        analysis_result = await generate_repo_analysis(metrics)
+        analysis_result['overall_score'] = overall_score
         return {**metrics, **analysis_result}
     except Exception as e:
         logger.exception(f"An error occurred during analysis: {str(e)}")

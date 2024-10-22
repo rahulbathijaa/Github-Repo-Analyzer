@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import UserProfileComponent from '../components/UserProfile';
 import RepoAnalysisComponent from '../components/RepoAnalysis';
 import LanguageHeatmap from '../components/LanguageHeatmap';
@@ -24,7 +24,13 @@ export default function Home() {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isUserProfileLoading, setIsUserProfileLoading] = useState(false);
+  const [isRepoAnalysisLoading, setIsRepoAnalysisLoading] = useState(false);
+  const [isHeatmapDataLoading, setIsHeatmapDataLoading] = useState(false);
+  const [isQueued, setIsQueued] = useState(false);
+
   const fetchUserProfile = async () => {
+    setIsUserProfileLoading(true);
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/user/${username}`);
       if (!response.ok) {
@@ -36,10 +42,13 @@ export default function Home() {
     } catch (error) {
       console.error('Error fetching user profile:', error);
       setError('Error fetching user profile.');
+    } finally {
+      setIsUserProfileLoading(false);
     }
   };
 
   const fetchRepoAnalysis = async () => {
+    setIsRepoAnalysisLoading(true);
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/repos/analyze/${username}`);
       if (!response.ok) {
@@ -51,10 +60,13 @@ export default function Home() {
     } catch (error) {
       console.error('Error fetching repo analysis:', error);
       setError('Error fetching repo analysis.');
+    } finally {
+      setIsRepoAnalysisLoading(false);
     }
   };
 
   const fetchLanguageCommits = async () => {
+    setIsHeatmapDataLoading(true);
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
       if (!response.ok) {
@@ -66,6 +78,8 @@ export default function Home() {
     } catch (error) {
       console.error('Error fetching language commits:', error);
       setError('Error fetching language commits.');
+    } finally {
+      setIsHeatmapDataLoading(false);
     }
   };
 
@@ -87,6 +101,20 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    if (isRepoAnalysisLoading) {
+      timeout = setTimeout(() => {
+        setIsQueued(true);
+      }, 5000); // 5 seconds threshold
+    } else {
+      setIsQueued(false);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [isRepoAnalysisLoading]);
 
   return (
     <div className="pt-16 pb-8 bg-black text-white min-h-screen">
@@ -131,6 +159,11 @@ export default function Home() {
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {isLoading && <p>Loading data...</p>}
+          {isQueued && <p>Your request is in queue due to high server load. Please wait...</p>}
+
+          {isUserProfileLoading && <p>Loading user profile...</p>}
+          {isRepoAnalysisLoading && <p>Analyzing repositories... This may take a moment.</p>}
+          {isHeatmapDataLoading && <p>Fetching language usage data...</p>}
 
           {userProfile && (
             <>
@@ -175,7 +208,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* New mini footer section */}
           <div
             style={{
               borderTop: '2px dashed #39E42C',
