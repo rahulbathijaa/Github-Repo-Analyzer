@@ -24,11 +24,11 @@ async def get_repo_info(owner: str, repo_name: str):
         return response.json()
 
 async def graphql_query(query: str, variables: dict):
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:  # Set a 30s timeout
         response = await client.post(
             GITHUB_GRAPHQL_URL,
             json={"query": query, "variables": variables},
             headers=HEADERS
         )
-        response.raise_for_status()
-        return response.json()
+    response.raise_for_status()
+    return response.json()
