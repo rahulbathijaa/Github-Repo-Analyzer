@@ -41,7 +41,7 @@ export default function Home() {
 
   const fetchRepoAnalysis = async () => {
     try {
-      const response = await fetch(`${BACKEND_BASE_URL}/repos/commits/${username}`);
+      const response = await fetch(`${BACKEND_BASE_URL}/repos/analyze/${username}`);
       if (!response.ok) {
         throw new Error('Error fetching repo analysis');
       }
