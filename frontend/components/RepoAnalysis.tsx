@@ -20,7 +20,7 @@ const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalysis }) =>
         <div>
           {/* <p><strong>Stars:</strong> {repoAnalysis.stargazers_count ?? 0}</p> */}
           <p><strong>Stars:</strong> {repoAnalysis.stars ?? 0}</p>
-          <p><strong>Forks:</strong> {repoAnalysis.forks_count ?? 0}</p>
+          <p><strong>Forks:</strong> {repoAnalysis.forks ?? 0}</p>
           <p><strong>Watchers:</strong> {repoAnalysis.watchers_count ?? 0}</p>
         </div>
         <div>

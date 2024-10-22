@@ -17,6 +17,7 @@ export interface UserProfile {
     stargazers_count?: number;
     stars?: number;
     forks_count?: number;
+    forks?: number;
     open_issues_count?: number;
     watchers_count?: number;
     created_at: string;
