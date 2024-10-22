@@ -208,10 +208,10 @@ export default function Home() {
                 <p className="text-lg mb-2">Built by <a href="https://www.rahulbathija.me/" target="_blank" rel="noopener noreferrer" className="underline">Rahul Bathija</a></p>
                 <div className="flex justify-end space-x-4">
                   <a href="https://x.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
-                    <Image src="/twitterlogo.png" alt="Twitter" width={48} height={48} />
+                    <Image src="/twitterlogo.png" alt="Twitter" width={36} height={36} />
                   </a>
                   <a href="https://github.com/rahulbathijaa" target="_blank" rel="noopener noreferrer">
-                    <Image src="/githublogo.png" alt="GitHub" width={48} height={48} />
+                    <Image src="/githublogo.png" alt="GitHub" width={36} height={36} />
                   </a>
                 </div>
               </div>

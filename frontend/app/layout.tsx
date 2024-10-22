@@ -14,7 +14,17 @@ export const metadata: Metadata = {
   title: "Github Profile Analyzer",
   description: "Get key insights for a Github Profile in seconds.",
   icons: {
-    icon: "/favicon.ico",  
+    icon: "/favicon.png",  
+  },
+  openGraph: {
+    images: [
+      {
+        url: "/coverphoto.png",
+        width: 800,
+        height: 600,
+        alt: "Cover Photo",
+      },
+    ],
   },
 };
 
