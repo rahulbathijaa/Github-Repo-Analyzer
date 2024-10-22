@@ -83,7 +83,6 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
           flexWrap: 'wrap',
           justifyContent: 'center',
           marginTop: '24px',
-          marginBottom: '24px', // Add bottom margin for spacing
         }}
       >
         {payload?.map((entry: Payload, index: number) => (
