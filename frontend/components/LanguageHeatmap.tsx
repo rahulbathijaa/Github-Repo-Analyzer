@@ -112,7 +112,20 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div style={{ width: '100%', height: 'auto', minHeight: 400, paddingBottom: '48px' }}>
+    <div 
+      style={{ 
+        width: '100%', 
+        height: 'auto', 
+        minHeight: 400,
+      }}
+    >
+      <style jsx>{`
+        @media (max-width: 768px) {
+          div {
+            padding-bottom: 48px;
+          }
+        }
+      `}</style>
       <ResponsiveContainer height={400}>
         <BarChart data={chartData} margin={{ bottom: 24 }}>
           <XAxis dataKey="year" />
