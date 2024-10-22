@@ -107,7 +107,7 @@ export default function Home() {
         <div style={{ gridColumn: '2 / 12' }}>
           <h1 className="text-3xl mb-6">GitHub Repo Analyzer</h1>
           <form
-            className="mt-6 grid grid-cols-12 gap-4 md:grid-cols-7"
+            className="mt-6 grid grid-cols-12 gap-4 md:grid-cols-12"
             onSubmit={(e) => {
               e.preventDefault();
               fetchAllData();
@@ -118,11 +118,11 @@ export default function Home() {
               placeholder="Enter a GitHub User Username (no org / enterprise accounts)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="col-span-12 md:col-span-6 p-3 text-base bg-white text-black border-none rounded"
+              className="col-span-12 md:col-start-2 md:col-span-6 p-3 text-base bg-white text-black border-none rounded"
             />
             <button
               type="submit"
-              className="col-span-12 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded"
+              className="col-span-12 md:col-start-8 md:col-span-1 p-3 bg-[#39E42C] text-black border-none rounded"
             >
               Go
             </button>
