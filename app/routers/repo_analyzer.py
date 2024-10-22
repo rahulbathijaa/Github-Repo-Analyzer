@@ -188,7 +188,24 @@ async def get_commits_by_language(username: str):
 
         for repo in repos:
             repo_languages = [edge['node']['name'] for edge in repo.get('languages', {}).get('edges', [])]
-            commits = repo.get('defaultBranchRef', {}).get('target', {}).get('history', {}).get('edges', [])
+            
+            # Check if defaultBranchRef and its nested keys exist
+            default_branch_ref = repo.get('defaultBranchRef')
+            if not default_branch_ref:
+                logger.warning(f"No default branch ref found for repo: {repo.get('name')}")
+                continue
+
+            target = default_branch_ref.get('target')
+            if not target:
+                logger.warning(f"No target found for default branch ref in repo: {repo.get('name')}")
+                continue
+
+            history = target.get('history')
+            if not history:
+                logger.warning(f"No commit history found for repo: {repo.get('name')}")
+                continue
+
+            commits = history.get('edges', [])
 
             for commit in commits:
                 commit_node = commit['node']
