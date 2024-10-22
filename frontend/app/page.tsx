@@ -202,7 +202,7 @@ export default function Home() {
           )}
 
           {heatmapData.length > 0 && (
-            <div style={{ marginTop: '24px', marginBottom: '48px' }}>
+            <div style={{ marginTop: '24px', marginBottom: '12px' }}>
               <h2 style={{ fontSize: '2em' }}>Language Usage Over Time</h2>
               <LanguageHeatmap data={heatmapData} />
             </div>
