@@ -21,9 +21,9 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div className="flex flex-col md:grid md:grid-cols-10 gap-4 md:gap-0 items-center md:items-start">
-      {/* Avatar */}
-      <div className="flex justify-center md:block">
+    <div className="flex flex-col md:grid md:grid-cols-10 gap-4 md:gap-0 md:items-start">
+      {/* Avatar - Column 1 */}
+      <div className="md:col-start-1 md:col-span-1">
         <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
@@ -33,8 +33,8 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
         />
       </div>
 
-      {/* Profile Info */}
-      <div className="flex flex-col items-start mt-4 md:mt-0 md:col-span-8">
+      {/* Profile Info - Column 3 onwards */}
+      <div className="flex flex-col mt-4 md:mt-0 md:col-start-3 md:col-span-8">
         <h2 className="text-3xl md:text-4xl font-bold mb-2">
           {userProfile.name || userProfile.login}
         </h2>
