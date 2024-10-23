@@ -21,23 +21,28 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div className="grid grid-cols-10">
-      <Image
-        src={userProfile.avatarUrl}
-        alt="Avatar"
-        width={100}
-        height={100}
-        className="col-start-1 rounded-full w-24 h-24 md:w-28 md:h-28"
-      />
-      <div className="col-start-2 col-span-8 flex flex-col">
-        <h2 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">
+    <div className="grid md:grid-cols-10 gap-4 md:gap-0 items-center md:items-start">
+      {/* Avatar */}
+      <div className="col-span-2 flex justify-center md:block">
+        <Image
+          src={userProfile.avatarUrl}
+          alt="Avatar"
+          width={100}
+          height={100}
+          className="rounded-full md:w-28 md:h-28"
+        />
+      </div>
+
+      {/* Profile Info */}
+      <div className="col-span-8 flex flex-col text-center md:text-left">
+        <h2 className="text-3xl md:text-4xl font-bold mb-2">
           {userProfile.name || userProfile.login}
         </h2>
-        <p className="text-sm md:text-base mb-1 text-center md:text-left">{userProfile.bio}</p>
-        <p className="text-sm md:text-base mb-1 text-center md:text-left">
+        <p className="text-sm md:text-base mb-1">{userProfile.bio}</p>
+        <p className="text-sm md:text-base mb-1">
           <strong>Years on GitHub:</strong> {yearsOnGitHub}
         </p>
-        <p className="text-sm md:text-base text-center md:text-left">
+        <p className="text-sm md:text-base">
           <span className="mr-4">
             <strong>Followers:</strong> {userProfile.followers}
           </span>
