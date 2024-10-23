@@ -11,7 +11,7 @@ const spaceGrotesk = Space_Grotesk({
 
 
 export const metadata: Metadata = {
-  title: "Github Profile Analyzer",
+  title: "Github Repo Analyzer",
   description: "Get key insights for a Github Profile in seconds.",
   icons: {
     icon: "/favicon.png",  
