@@ -167,7 +167,9 @@ export default function Home() {
 
           {userProfile && (
             <>
-              <UserProfileComponent userProfile={userProfile} />
+              <div className="grid grid-cols-12 gap-4 items-start">
+                <UserProfileComponent userProfile={userProfile} />
+              </div>
               <div
                 style={{
                   borderTop: '2px dashed #39E42C',
@@ -202,7 +204,7 @@ export default function Home() {
           )}
 
             {heatmapData.length > 0 && (
-              <div style={{ marginTop: '48px', marginBottom: '48px' }}>
+              <div style={{ marginTop: '48px', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '2em', marginBottom: '24px' }}>Language Usage Over Time</h2>
                 <LanguageHeatmap data={heatmapData} />
               </div>

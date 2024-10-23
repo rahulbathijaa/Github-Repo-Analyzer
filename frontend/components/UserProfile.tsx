@@ -21,25 +21,25 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div className="mt-12 grid grid-cols-12 gap-5 items-start">
-      <div className="col-span-2 order-1 mb-4 md:mb-0">
+    <>
+      <div className="col-span-1 md:col-span-1 row-span-1 md:row-auto">
         <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
           width={100}
           height={100}
-          className="rounded-full w-24 h-24 md:w-28 md:h-28"
+          className="rounded-full w-24 h-24 md:w-28 md:h-28 mx-auto md:mx-0"
         />
       </div>
-      <div className="col-span-9 col-start-3 order-2">
-        <h2 className="text-3xl md:text-4xl font-bold mb-2">
+      <div className="col-span-12 md:col-span-9 mt-4 md:mt-0">
+        <h2 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">
           {userProfile.name || userProfile.login}
         </h2>
-        <p className="text-sm md:text-base mb-1">{userProfile.bio}</p>
-        <p className="text-sm md:text-base mb-1">
+        <p className="text-sm md:text-base mb-1 text-center md:text-left">{userProfile.bio}</p>
+        <p className="text-sm md:text-base mb-1 text-center md:text-left">
           <strong>Years on GitHub:</strong> {yearsOnGitHub}
         </p>
-        <p className="text-sm md:text-base">
+        <p className="text-sm md:text-base text-center md:text-left">
           <span className="mr-4">
             <strong>Followers:</strong> {userProfile.followers}
           </span>
@@ -48,7 +48,7 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
           </span>
         </p>
       </div>
-    </div>
+    </>
   );
 };
 
