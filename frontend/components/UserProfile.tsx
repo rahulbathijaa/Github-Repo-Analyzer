@@ -21,20 +21,20 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div className="grid md:grid-cols-10 gap-4 md:gap-0 items-center md:items-start">
+    <div className="flex flex-col md:grid md:grid-cols-10 gap-4 md:gap-0 items-center md:items-start">
       {/* Avatar */}
-      <div className="col-span-2 flex justify-center md:block">
+      <div className="flex justify-center md:block">
         <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
           width={100}
           height={100}
-          className="rounded-full md:w-28 md:h-28"
+          className="rounded-full w-24 h-24 md:w-28 md:h-28"
         />
       </div>
 
       {/* Profile Info */}
-      <div className="col-span-8 flex flex-col text-center md:text-left">
+      <div className="flex flex-col items-start mt-4 md:mt-0 md:col-span-8">
         <h2 className="text-3xl md:text-4xl font-bold mb-2">
           {userProfile.name || userProfile.login}
         </h2>
