@@ -4,12 +4,12 @@ import React from 'react';
 import { RepoAnalysis } from '../types';
 
 interface RepoAnalysisProps {
-  repoAnalyses: RepoAnalysis[]; // Change to an array to handle multiple analyses
+  repoAnalyses: RepoAnalysis[]; 
 }
 
 const RepoAnalysisComponent: React.FC<RepoAnalysisProps> = ({ repoAnalyses }) => {
   return (
-    <div className="col-span-10 flex flex-col gap-8">
+    <div className="col-span-10 flex flex-col gap-8 mt-4">
       {repoAnalyses.map((repoAnalysis, index) => (
         <div key={index} className="flex flex-col gap-4 pb-4 mb-4">
           <div className="text-3xl font-bold">

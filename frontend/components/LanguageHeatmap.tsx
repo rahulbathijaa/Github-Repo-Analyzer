@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -111,23 +111,36 @@ const LanguageHeatmap: React.FC<Props> = ({ data }) => {
     );
   };
 
+  // State to detect mobile devices
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Update isMobile based on window width
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div 
       style={{ 
         width: '100%', 
         height: 'auto', 
         minHeight: 400,
+        paddingBottom: isMobile ? '48px' : '0px',
       }}
     >
-      <style jsx>{`
-        @media (max-width: 768px) {
-          div {
-            padding-bottom: 48px;
-          }
-        }
-      `}</style>
       <ResponsiveContainer height={400}>
-        <BarChart data={chartData} margin={{ bottom: 24 }}>
+        <BarChart data={chartData} margin={{ bottom: 0 }}>
           <XAxis dataKey="year" />
           {/* <YAxis /> */}
           <Tooltip />

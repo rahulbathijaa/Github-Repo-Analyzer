@@ -10,8 +10,9 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",  # Frontend origin
+    "http://localhost:3000",  
     "https://localhost:3000",
+    "https://www.ghrepoanalyzer.com",
     "https://github-repo-analyzer.vercel.app",
     "https://github-repo-analyzer-git-main-rahul-bathijas-projects.vercel.app",
     "https://github-repo-analyzer-48oqcxj38-rahul-bathijas-projects.vercel.app",

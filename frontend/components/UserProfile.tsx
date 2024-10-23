@@ -21,8 +21,8 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
   }
 
   return (
-    <div className="mt-5 grid grid-cols-1 md:grid-cols-6 gap-5 items-start">
-      <div className="col-span-1 md:col-span-1 order-1 mb-4 md:mb-0">
+    <div className="mt-12 grid grid-cols-12 gap-5 items-start">
+      <div className="col-span-2 order-1 mb-4 md:mb-0">
         <Image
           src={userProfile.avatarUrl}
           alt="Avatar"
@@ -31,7 +31,7 @@ const UserProfileComponent: React.FC<UserProfileProps> = ({ userProfile }) => {
           className="rounded-full w-24 h-24 md:w-28 md:h-28"
         />
       </div>
-      <div className="col-span-1 md:col-span-5 order-2">
+      <div className="col-span-9 col-start-3 order-2">
         <h2 className="text-3xl md:text-4xl font-bold mb-2">
           {userProfile.name || userProfile.login}
         </h2>
