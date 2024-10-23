@@ -166,24 +166,25 @@ export default function Home() {
           {isHeatmapDataLoading && <p>Fetching language usage data...</p>}
 
           {userProfile && (
-            <>
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <UserProfileComponent userProfile={userProfile} />
-              </div>
-              <div
-                style={{
-                  borderTop: '2px dashed #39E42C',
-                  marginTop: '48px',
-                  marginBottom: '48px',
-                  gridColumn: '1 / -1',
-                  borderTopStyle: 'dashed',
-                  borderTopWidth: '3px',
-                  borderTopColor: '#39E42C',
-                  borderImage: 'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
-                }}
-              ></div>
-            </>
-          )}
+          <>
+            <div className="grid grid-cols-12 gap-4 items-start mt-12">
+              <UserProfileComponent userProfile={userProfile} />
+            </div>
+            <div
+              style={{
+                borderTop: '2px dashed #39E42C',
+                marginTop: '48px',
+                marginBottom: '48px',
+                gridColumn: '1 / -1',
+                borderTopStyle: 'dashed',
+                borderTopWidth: '3px',
+                borderTopColor: '#39E42C',
+                borderImage:
+                  'repeating-linear-gradient(to right, #39E42C, #39E42C 8px, transparent 8px, transparent 16px) 1',
+              }}
+            ></div>
+          </>
+        )}
 
           {repoAnalysis.length > 0 && (
             <>
