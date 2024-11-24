@@ -14,6 +14,7 @@ interface HeatmapData {
   year: number;
   size: number;
 }
+//fresh build cache issue
 
 export default function Home() {
   const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
